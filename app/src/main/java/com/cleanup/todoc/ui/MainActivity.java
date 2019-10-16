@@ -48,7 +48,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mListTasks = findViewById(R.id.list_tasks);
+        mLblNoTasks = findViewById(R.id.lbl_no_task);
 
+        mListTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mListTasks.setAdapter(mAdapter);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
 
         mViewModel.getUiModelsLiveData().observe(this,new Observer<List<TaskUIModel>>() {
@@ -63,18 +67,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 if (viewAction == ViewAction.NO_TASK){
                     mLblNoTasks.setVisibility(View.VISIBLE);
                     mListTasks.setVisibility(View.GONE);
-                }else {
+                }else if (viewAction == ViewAction.SHOW_TASKS) {
                     mLblNoTasks.setVisibility(View.GONE);
                     mListTasks.setVisibility(View.VISIBLE);
                 }
             }
         });
-
-        mListTasks = findViewById(R.id.list_tasks);
-        mLblNoTasks = findViewById(R.id.lbl_no_task);
-
-        mListTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mListTasks.setAdapter(mAdapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,16 +94,16 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         if (id == R.id.filter_alphabetical) {
             mViewModel.mSortMethod = 1;
-            mViewModel.refresh();
+            //mViewModel.refresh();
         } else if (id == R.id.filter_alphabetical_inverted) {
             mViewModel.mSortMethod = 2;
-            mViewModel.refresh();
+            //mViewModel.refresh();
         } else if (id == R.id.filter_oldest_first) {
             mViewModel.mSortMethod = 3;
-            mViewModel.refresh();
+            //mViewModel.refresh();
         } else if (id == R.id.filter_recent_first) {
             mViewModel.mSortMethod = 4;
-            mViewModel.refresh();
+            //mViewModel.refresh();
         }
         return super.onOptionsItemSelected(item);
     }

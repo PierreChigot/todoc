@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.List;
@@ -46,6 +48,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind(getItem(position), deleteTaskListener);
 
     }
 
@@ -68,6 +71,14 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
         void bind(final TaskUIModel model, final DeleteTaskListener listener) {
             mNameTask.setText(model.getName());
 
+
+            mImgProject.setSupportImageTintList(ColorStateList.valueOf(model.getColorRes()));
+            //mProjectName.setText(taskProject.getName());
+
+            //imgProject.setVisibility(View.INVISIBLE);
+            //lblProjectName.setText("");
+
+
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -78,6 +89,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
 
         }
     }
+
     private static class DiffCallback extends DiffUtil.ItemCallback<TaskUIModel> {
 
 
@@ -91,6 +103,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
             return oldItem.equals(newItem);
         }
     }
+
     public interface DeleteTaskListener {
 
         void onDeleteTask(long taskId);

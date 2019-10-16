@@ -18,12 +18,13 @@ public class Task {
     /**
      * The unique identifier of the task
      */
+    @PrimaryKey(autoGenerate = true)
     private long id;
 
     /**
      * The unique identifier of the project associated to the task
      */
-    @PrimaryKey(autoGenerate = true)
+
     private long projectId;
 
     /**
@@ -125,6 +126,7 @@ public class Task {
     public long getCreationTimestamp() {
         return creationTimestamp;
     }
+
 
     /**
      * Comparator to sort task from A to Z

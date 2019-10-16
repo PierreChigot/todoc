@@ -5,7 +5,8 @@ public enum ViewAction {
     ALPHABETICAL,
     ALPHABETICAL_INVERTED,
     RECENT_FIRST,
-    OLD_FIRST
+    OLD_FIRST,
+    SHOW_TASKS;
 
 
 }
