@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,34 +23,26 @@ import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
     private MainViewModel mViewModel;
 
-    private final Project[] allProjects = Project.getAllProjects();
-    @NonNull
-    private final ArrayList<Task> tasks = new ArrayList<>();
-    private final TasksAdapter adapter = new TasksAdapter(tasks, this);
-    @NonNull
-    private SortMethod sortMethod = SortMethod.NONE;
+    private final Project[] mAllProjects = Project.getAllProjects();
+
+    private final TasksAdapter mAdapter = new TasksAdapter(this);
     @Nullable
-    public AlertDialog dialog = null;
+    public AlertDialog mDialog = null;
     @Nullable
-    private EditText dialogEditText = null;
+    private EditText mDialogEditText = null;
     @Nullable
-    private Spinner dialogSpinner = null;
-    // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
+    private Spinner mDialogSpinner = null;
     @NonNull
-    private RecyclerView listTasks;
-    // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
+    private RecyclerView mListTasks;
     @NonNull
-    private TextView lblNoTasks;
+    private TextView mLblNoTasks;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,11 +51,30 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
 
-        listTasks = findViewById(R.id.list_tasks);
-        lblNoTasks = findViewById(R.id.lbl_no_task);
+        mViewModel.getUiModelsLiveData().observe(this,new Observer<List<TaskUIModel>>() {
+            @Override
+            public void onChanged(List<TaskUIModel> taskUIModels) {
+                mAdapter.submitList(taskUIModels);
+            }
+        });
+        mViewModel.getViewActionMutableLiveData().observe(this, new Observer<ViewAction>() {
+            @Override
+            public void onChanged(ViewAction viewAction) {
+                if (viewAction == ViewAction.NO_TASK){
+                    mLblNoTasks.setVisibility(View.VISIBLE);
+                    mListTasks.setVisibility(View.GONE);
+                }else {
+                    mLblNoTasks.setVisibility(View.GONE);
+                    mListTasks.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
-        listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        listTasks.setAdapter(adapter);
+        mListTasks = findViewById(R.id.list_tasks);
+        mLblNoTasks = findViewById(R.id.lbl_no_task);
+
+        mListTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mListTasks.setAdapter(mAdapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,36 +95,39 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            sortMethod = SortMethod.ALPHABETICAL;
+            mViewModel.mSortMethod = 1;
+            mViewModel.refresh();
         } else if (id == R.id.filter_alphabetical_inverted) {
-            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+            mViewModel.mSortMethod = 2;
+            mViewModel.refresh();
         } else if (id == R.id.filter_oldest_first) {
-            sortMethod = SortMethod.OLD_FIRST;
+            mViewModel.mSortMethod = 3;
+            mViewModel.refresh();
         } else if (id == R.id.filter_recent_first) {
-            sortMethod = SortMethod.RECENT_FIRST;
+            mViewModel.mSortMethod = 4;
+            mViewModel.refresh();
         }
-        updateTasks();
         return super.onOptionsItemSelected(item);
     }
     @Override
-    public void onDeleteTask(Task task) {
-        tasks.remove(task);
-        updateTasks();
+    public void onDeleteTask(long taskId) {
+        mViewModel.deleteTask(taskId);
+
     }
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
-        // If dialog is open
-        if (dialogEditText != null && dialogSpinner != null) {
+        // If mDialog is open
+        if (mDialogEditText != null && mDialogSpinner != null) {
             // Get the name of the task
-            String taskName = dialogEditText.getText().toString();
+            String taskName = mDialogEditText.getText().toString();
 
             // Get the selected project to be associated to the task
             Project taskProject = null;
-            if (dialogSpinner.getSelectedItem() instanceof Project) {
-                taskProject = (Project) dialogSpinner.getSelectedItem();
+            if (mDialogSpinner.getSelectedItem() instanceof Project) {
+                taskProject = (Project) mDialogSpinner.getSelectedItem();
             }
             // If a name has not been set
             if (taskName.trim().isEmpty()) {
-                dialogEditText.setError(getString(R.string.empty_task_name));
+                mDialogEditText.setError(getString(R.string.empty_task_name));
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
@@ -124,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                         taskName,
                         new Date().getTime()
                 );
-                addTask(task);
+                mViewModel.addTask(task);
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
@@ -132,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 dialogInterface.dismiss();
             }
         }
-        // If dialog is aloready closed
+        // If mDialog is already closed
         else {
             dialogInterface.dismiss();
         }
@@ -142,42 +157,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         dialog.show();
 
-        dialogEditText = dialog.findViewById(R.id.txt_task_name);
-        dialogSpinner = dialog.findViewById(R.id.project_spinner);
+        mDialogEditText = dialog.findViewById(R.id.txt_task_name);
+        mDialogSpinner = dialog.findViewById(R.id.project_spinner);
 
         populateDialogSpinner();
     }
 
-    private void addTask(@NonNull Task task) {
-        tasks.add(task);
-        updateTasks();
-    }
-
-    private void updateTasks() {
-        if (tasks.size() == 0) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
-                    break;
-
-            }
-            adapter.updateTasks(tasks);
-        }
-    }
 
     @NonNull
     private AlertDialog getAddTaskDialog() {
@@ -189,52 +174,41 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         alertBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                dialogEditText = null;
-                dialogSpinner = null;
-                dialog = null;
+                mDialogEditText = null;
+                mDialogSpinner = null;
+                mDialog = null;
             }
         });
 
-        dialog = alertBuilder.create();
+        mDialog = alertBuilder.create();
 
         // This instead of listener to positive button in order to avoid automatic dismiss
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
             public void onShow(DialogInterface dialogInterface) {
 
-                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button button = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
-                        onPositiveButtonClick(dialog);
+                        onPositiveButtonClick(mDialog);
                     }
                 });
             }
         });
 
-        return dialog;
+        return mDialog;
     }
-
+        //TODO qui est-ce qui lance ça : activity ou viewmodel?
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mAllProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        if (dialogSpinner != null) {
-            dialogSpinner.setAdapter(adapter);
+        if (mDialogSpinner != null) {
+            mDialogSpinner.setAdapter(adapter);
         }
     }
 
-    private enum SortMethod {
 
-        ALPHABETICAL,
-
-        ALPHABETICAL_INVERTED,
-
-        RECENT_FIRST,
-
-        OLD_FIRST,
-
-        NONE
-    }
 }
