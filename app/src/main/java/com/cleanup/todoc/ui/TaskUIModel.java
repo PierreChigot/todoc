@@ -4,14 +4,13 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 
 
-
 public class TaskUIModel {
     private final long id;
     private final String name;
     @ColorRes
     private final int colorRes;
 
-    public TaskUIModel (long id, String name, @ColorRes int colorRes){
+    public TaskUIModel(long id, String name, @ColorRes int colorRes) {
         this.id = id;
         this.name = name;
         this.colorRes = colorRes;
@@ -28,6 +27,7 @@ public class TaskUIModel {
     public int getColorRes() {
         return colorRes;
     }
+
     @Override
     public boolean equals(@Nullable Object o) {
         if (this == o) return true;

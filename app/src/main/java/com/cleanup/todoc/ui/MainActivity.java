@@ -28,7 +28,9 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
+
     private MainViewModel mViewModel;
+    private List<Project> mProjects;
 
 
 
@@ -71,6 +73,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                     mLblNoTasks.setVisibility(View.GONE);
                     mListTasks.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+        //TODO, passer par un ProjectUIModel???
+        mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
+            @Override
+            public void onChanged(List<Project> projects) {
+                mProjects = projects;
             }
         });
 
@@ -126,10 +135,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-                // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
+
                 Task task = new Task(
-                        id,
+                        -1,
                         taskProject.getId(),
                         taskName,
                         new Date().getTime()
@@ -198,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     private void populateDialogSpinner() {
-        List<Project> projects = mViewModel.getProjects();
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projects);
+
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (mDialogSpinner != null) {
             mDialogSpinner.setAdapter(adapter);

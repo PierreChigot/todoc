@@ -19,20 +19,23 @@ import com.cleanup.todoc.utils.SingleLiveEvent;
 
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MainViewModel extends ViewModel {
+class MainViewModel extends ViewModel {
 
 
     @NonNull
     private ProjectDao mProjectDao;
     @NonNull
     private TaskDao mTaskDao;
+    private long mLastId = -1;
 
 
     private final MediatorLiveData<List<TaskUIModel>> mUiModelsLiveData = new MediatorLiveData<>();
     private final SingleLiveEvent<ViewAction> mSingleLiveDataEvent = new SingleLiveEvent<>();
+    private final MutableLiveData<List<Project>>mProjectLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<SortingMethod> mSortingMethodLiveData = new MutableLiveData<>();
 
@@ -40,7 +43,7 @@ public class MainViewModel extends ViewModel {
     private SortingMethod mSortingMethod = new SortingMethod(-1);
 
 
-    public MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
+    MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
         wireUpMediator();
@@ -81,9 +84,14 @@ public class MainViewModel extends ViewModel {
         return mSingleLiveDataEvent;
     }
 
-    void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, SortingMethod sortingMethod) {
+    MutableLiveData<List<Project>> getProjectLiveData(){
+        return mProjectLiveData;
+    }
+
+    private void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, SortingMethod sortingMethod) {
 
         List<TaskUIModel> uiModels = new ArrayList<>();
+
 
         Log.d("Pierre", "combineProjectsAndTasks() called with: projects = [" + projects + "], tasks = [" + tasks + "]");
         if (projects == null || projects.isEmpty()) {
@@ -100,21 +108,29 @@ public class MainViewModel extends ViewModel {
         if (sortingMethod.getSortingId() == 1) {
             Collections.sort(tasks, new Task.TaskAZComparator());
             for (Task task : tasks) {
-                uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                if (task.getProject() != null) {
+                    uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                }
             }
         } else if (sortingMethod.getSortingId() == 2) {
             Collections.sort(tasks, new Task.TaskZAComparator());
             for (Task task : tasks) {
-                uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                if (task.getProject() != null) {
+                    uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                }
             }
         } else if (sortingMethod.getSortingId() == 3) {
             Collections.sort(tasks, new Task.TaskOldComparator());
             for (Task task : tasks) {
-                uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                if (task.getProject() != null) {
+                    uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                }
             }
         } else if (sortingMethod.getSortingId() == 4) {
             for (Task task : tasks) {
-                uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                if (task.getProject() != null) {
+                    uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                }
             }
             Collections.sort(tasks, new Task.TaskRecentComparator());
         } else if (sortingMethod.getSortingId() == 5) {
@@ -126,9 +142,15 @@ public class MainViewModel extends ViewModel {
                 }
             }
         }
-
+        for (TaskUIModel uiModel : uiModels) {
+            if (uiModel.getId() <= mLastId){
+                mLastId = uiModel.getId();
+            }
+        }
         mUiModelsLiveData.setValue(uiModels);
+
         mSingleLiveDataEvent.setValue(ViewAction.SHOW_TASKS);
+        mProjectLiveData.setValue(projects);
     }
 
 
@@ -140,9 +162,15 @@ public class MainViewModel extends ViewModel {
         addProject(project2);
         addProject(project3);
     }
-    List<Project> getProjects(){
 
-        return mProjectDao.getProjectsLiveData().getValue();
+    List<Project> getProjects() {
+        return Arrays.asList(
+                new Project(1L, "Projet Tartampion", 0xFFEADAD1),
+                new Project(2L, "Projet Lucidia", 0xFFB4CDBA),
+                new Project(3L, "Projet Circus", 0xFFA3CED2)
+        );
+        //TODO : Why it doesn't work's???
+        //return mProjectDao.getProjectsLiveData().getValue();
     }
 
     void SortingTasks(int sortingType) {
@@ -152,31 +180,26 @@ public class MainViewModel extends ViewModel {
 
     }
 
-
     private TaskUIModel map(long id, String name, int color) {
 
         return new TaskUIModel(id, name, color);
     }
 
-
-
     void addTask(Task task) {
 
-        new InsertDataAsyncTask(mProjectDao, mTaskDao, task, null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new InsertDataAsyncTask(mProjectDao, mTaskDao, task, null, mLastId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
 
     private void addProject(Project project) {
 
-        new InsertDataAsyncTask(mProjectDao, mTaskDao, null, project).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new InsertDataAsyncTask(mProjectDao, mTaskDao, null, project,mLastId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
-
 
     void deleteTask(long taskId) {
         new DeleteDataAsyncTask(mTaskDao, taskId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
 
     private static class InsertDataAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -189,13 +212,15 @@ public class MainViewModel extends ViewModel {
 
         private final Project mProject;
 
-        private InsertDataAsyncTask(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao, Task task, Project project) {
+        private final long mLastTaskId;
+
+        private InsertDataAsyncTask(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao, Task task, Project project, long lastTaskId) {
             mProjectDao = projectDao;
             mTaskDao = taskDao;
             mTask = task;
             mProject = project;
+            mLastTaskId = lastTaskId;
         }
-
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -203,7 +228,8 @@ public class MainViewModel extends ViewModel {
                 mProjectDao.createProject(mProject);
             }
             if (mTask != null) {
-                mTaskDao.insertTask(mTask);
+                Task task = new Task(mLastTaskId +1,mTask.getProjectId(), mTask.getName(), mTask.getCreationTimestamp());
+                mTaskDao.insertTask(task);
             }
 
             return null;
@@ -218,12 +244,11 @@ public class MainViewModel extends ViewModel {
         private long mTaskId;
 
 
-        private DeleteDataAsyncTask( @NonNull TaskDao taskDao, long taskId) {
+        private DeleteDataAsyncTask(@NonNull TaskDao taskDao, long taskId) {
             mTaskDao = taskDao;
             mTaskId = taskId;
 
         }
-
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -232,10 +257,11 @@ public class MainViewModel extends ViewModel {
             return null;
         }
     }
+
     private class SortingMethod {
         private int mSortingId;
 
-        private SortingMethod(int sortingId){
+        private SortingMethod(int sortingId) {
             mSortingId = sortingId;
         }
 
@@ -247,5 +273,7 @@ public class MainViewModel extends ViewModel {
             this.mSortingId = mSortingId;
         }
     }
+
+
 
 }
