@@ -30,7 +30,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
     private MainViewModel mViewModel;
 
-    private final Project[] mAllProjects = Project.getAllProjects();
+
 
     private final TasksAdapter mAdapter = new TasksAdapter(this);
     @Nullable
@@ -93,18 +93,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            mViewModel.mSortMethod = 1;
-            //mViewModel.refresh();
+            mViewModel.SortingTasks(1);
         } else if (id == R.id.filter_alphabetical_inverted) {
-            mViewModel.mSortMethod = 2;
-            //mViewModel.refresh();
+           mViewModel.SortingTasks(2);
         } else if (id == R.id.filter_oldest_first) {
-            mViewModel.mSortMethod = 3;
-            //mViewModel.refresh();
+           mViewModel.SortingTasks(3);
         } else if (id == R.id.filter_recent_first) {
-            mViewModel.mSortMethod = 4;
-            //mViewModel.refresh();
-        }
+           mViewModel.SortingTasks(4);
+        } else if (id == R.id.filter_project)
+            mViewModel.SortingTasks(5);
         return super.onOptionsItemSelected(item);
     }
     @Override
@@ -199,9 +196,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         return mDialog;
     }
-        //TODO qui est-ce qui lance ça : activity ou viewmodel?
+
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mAllProjects);
+        List<Project> projects = mViewModel.getProjects();
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (mDialogSpinner != null) {
             mDialogSpinner.setAdapter(adapter);

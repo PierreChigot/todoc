@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.List;
@@ -25,12 +24,12 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
 
 
     @NonNull
-    private final DeleteTaskListener deleteTaskListener;
+    private final DeleteTaskListener mDeleteTaskListener;
 
 
     TasksAdapter(DeleteTaskListener deleteTaskListener) {
         super(new DiffCallback());
-        this.deleteTaskListener = deleteTaskListener;
+        mDeleteTaskListener = deleteTaskListener;
 
     }
 
@@ -48,7 +47,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position), deleteTaskListener);
+        holder.bind(getItem(position), mDeleteTaskListener);
 
     }
 
@@ -82,7 +81,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
             mDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onDeleteTask(model.getId());
+                   listener.onDeleteTask(model.getId());
 
                 }
             });
