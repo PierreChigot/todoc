@@ -19,7 +19,6 @@ import com.cleanup.todoc.utils.SingleLiveEvent;
 
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,11 +35,10 @@ class MainViewModel extends ViewModel {
     private final MediatorLiveData<List<TaskUIModel>> mUiModelsLiveData = new MediatorLiveData<>();
     private final SingleLiveEvent<ViewAction> mSingleLiveDataEvent = new SingleLiveEvent<>();
     private final MutableLiveData<List<Project>>mProjectLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> mSortingMethodLiveData = new MutableLiveData<Integer>();
 
-    private final MutableLiveData<SortingMethod> mSortingMethodLiveData = new MutableLiveData<>();
 
-
-    private SortingMethod mSortingMethod = new SortingMethod(-1);
+    private Integer mSortingMethod = -1;
 
 
     MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
@@ -67,10 +65,11 @@ class MainViewModel extends ViewModel {
                 combineProjectsAndTasks(liveDataProject.getValue(), tasks, mSortingMethodLiveData.getValue());
             }
         });
-        mUiModelsLiveData.addSource(mSortingMethodLiveData, new Observer<SortingMethod>() {
+        mUiModelsLiveData.addSource(mSortingMethodLiveData, new Observer<Integer>() {
             @Override
-            public void onChanged(SortingMethod sortingMethod) {
-                combineProjectsAndTasks(liveDataProject.getValue(), liveDataTasks.getValue(), mSortingMethod);
+            public void onChanged(Integer sortingMethod) {
+                mSortingMethod = sortingMethod;
+                combineProjectsAndTasks(liveDataProject.getValue(),liveDataTasks.getValue(), mSortingMethod);
             }
         });
     }
@@ -88,7 +87,7 @@ class MainViewModel extends ViewModel {
         return mProjectLiveData;
     }
 
-    private void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, SortingMethod sortingMethod) {
+    private void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, Integer sortingMethod) {
 
         List<TaskUIModel> uiModels = new ArrayList<>();
 
@@ -103,37 +102,37 @@ class MainViewModel extends ViewModel {
             return;
         }
         if (sortingMethod == null) {
-            sortingMethod = new SortingMethod(1);
+            sortingMethod = 1;
         }
-        if (sortingMethod.getSortingId() == 1) {
+        if (sortingMethod == 1) {
             Collections.sort(tasks, new Task.TaskAZComparator());
             for (Task task : tasks) {
                 if (task.getProject() != null) {
                     uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
                 }
             }
-        } else if (sortingMethod.getSortingId() == 2) {
+        } else if (sortingMethod == 2) {
             Collections.sort(tasks, new Task.TaskZAComparator());
             for (Task task : tasks) {
                 if (task.getProject() != null) {
                     uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
                 }
             }
-        } else if (sortingMethod.getSortingId() == 3) {
+        } else if (sortingMethod == 3) {
             Collections.sort(tasks, new Task.TaskOldComparator());
             for (Task task : tasks) {
                 if (task.getProject() != null) {
                     uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
                 }
             }
-        } else if (sortingMethod.getSortingId() == 4) {
+        } else if (sortingMethod == 4) {
             for (Task task : tasks) {
                 if (task.getProject() != null) {
                     uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
                 }
             }
             Collections.sort(tasks, new Task.TaskRecentComparator());
-        } else if (sortingMethod.getSortingId() == 5) {
+        } else if (sortingMethod == 5) {
             for (Project project : projects) {
                 for (Task task : tasks) {
                     if (project.getId() == task.getProjectId()) {
@@ -148,7 +147,6 @@ class MainViewModel extends ViewModel {
             }
         }
         mUiModelsLiveData.setValue(uiModels);
-
         mSingleLiveDataEvent.setValue(ViewAction.SHOW_TASKS);
         mProjectLiveData.setValue(projects);
     }
@@ -163,18 +161,9 @@ class MainViewModel extends ViewModel {
         addProject(project3);
     }
 
-    List<Project> getProjects() {
-        return Arrays.asList(
-                new Project(1L, "Projet Tartampion", 0xFFEADAD1),
-                new Project(2L, "Projet Lucidia", 0xFFB4CDBA),
-                new Project(3L, "Projet Circus", 0xFFA3CED2)
-        );
-        //TODO : Why it doesn't work's???
-        //return mProjectDao.getProjectsLiveData().getValue();
-    }
 
     void SortingTasks(int sortingType) {
-        mSortingMethod.setSortingId(sortingType);
+        mSortingMethod = sortingType;
 
         mSortingMethodLiveData.setValue(mSortingMethod);
 
@@ -257,6 +246,7 @@ class MainViewModel extends ViewModel {
             return null;
         }
     }
+/*
 
     private class SortingMethod {
         private int mSortingId;
@@ -273,6 +263,7 @@ class MainViewModel extends ViewModel {
             this.mSortingId = mSortingId;
         }
     }
+*/
 
 
 
