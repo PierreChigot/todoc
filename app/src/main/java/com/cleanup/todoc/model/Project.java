@@ -50,7 +50,7 @@ public class Project {
      * @return all the projects of the application
      */
     @NonNull
-    public static Project[] getAllProjects() {
+    private static Project[] getAllProjects() {
         return new Project[]{
                 new Project(1L, "Projet Tartampion", 0xFFEADAD1),
                 new Project(2L, "Projet Lucidia", 0xFFB4CDBA),
@@ -102,6 +102,8 @@ public class Project {
     public int getColor() {
         return color;
     }
+
+
 
     @Override
     @NonNull

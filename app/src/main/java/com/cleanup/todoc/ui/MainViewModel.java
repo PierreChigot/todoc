@@ -35,12 +35,12 @@ class MainViewModel extends ViewModel {
     private final MediatorLiveData<List<TaskUIModel>> mUiModelsLiveData = new MediatorLiveData<>();
     private final SingleLiveEvent<ViewAction> mSingleLiveDataEvent = new SingleLiveEvent<>();
     private final MutableLiveData<List<Project>>mProjectLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Integer> mSortingMethodLiveData = new MutableLiveData<Integer>();
+    private final MutableLiveData<Integer> mSortingMethodLiveData = new MutableLiveData<>();
 
 
     private Integer mSortingMethod = -1;
 
-
+    //TODO provider ???
     MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
