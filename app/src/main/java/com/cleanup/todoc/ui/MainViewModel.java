@@ -40,7 +40,7 @@ class MainViewModel extends ViewModel {
 
     private Integer mSortingMethod = -1;
 
-    //TODO provider ???
+    //TODO Est-ce qu'il faut un ContentProvider comme dans le cours OC ?
     MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
@@ -93,10 +93,10 @@ class MainViewModel extends ViewModel {
 
 
         Log.d("Pierre", "combineProjectsAndTasks() called with: projects = [" + projects + "], tasks = [" + tasks + "]");
-        if (projects == null || projects.isEmpty()) {
-            initializeProjects();
+        /*if (projects == null || projects.isEmpty()) {
+            //initializeProjects();
             return;
-        }
+        }*/
         if (tasks == null || tasks.isEmpty()) {
             mSingleLiveDataEvent.setValue(ViewAction.NO_TASK);
             return;
@@ -104,7 +104,7 @@ class MainViewModel extends ViewModel {
         if (sortingMethod == null) {
             sortingMethod = 1;
         }
-        if (sortingMethod == 1) {
+        if (sortingMethod == 1 ) {
             Collections.sort(tasks, new Task.TaskAZComparator());
             for (Task task : tasks) {
                 if (task.getProject() != null) {
@@ -152,14 +152,14 @@ class MainViewModel extends ViewModel {
     }
 
 
-    private void initializeProjects() {
+    /*private void initializeProjects() {
         Project project1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         Project project2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
         Project project3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
         addProject(project1);
         addProject(project2);
         addProject(project3);
-    }
+    }*/
 
 
     void SortingTasks(int sortingType) {

@@ -16,6 +16,7 @@ public interface TaskDao {
     @Query("SELECT * FROM Task")
     LiveData<List<Task>> getTasksLiveData();
 
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertTask(Task task);
 
@@ -24,4 +25,7 @@ public interface TaskDao {
 
     @Query("DELETE FROM Task WHERE id = :taskId")
     int deleteTask(long taskId);
+
+    @Query("DELETE FROM Task")
+    void deleteAll();
 }

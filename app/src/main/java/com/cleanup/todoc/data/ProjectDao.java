@@ -16,6 +16,12 @@ public interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void createProject(Project project);
 
+    @Insert
+    void insertAll(Project... projects);
+
+
     @Query("SELECT * FROM Project")
     LiveData<List<Project>> getProjectsLiveData();
+
+
 }

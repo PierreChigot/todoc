@@ -20,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.data.AppDatabase;
+import com.cleanup.todoc.data.ProjectDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
@@ -30,7 +32,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     private MainViewModel mViewModel;
-    private List<Project> mProjects;
+    //private ProjectDao mProjectDao;
+    private Project[] mProjects = Project.getAllProjects();
+    //private List<Project> mProjects;
+
 
 
 
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         });
         mViewModel.getViewActionMutableLiveData().observe(this, new Observer<ViewAction>() {
             @Override
+            //TODO :  a la rotation de l'écran on ne repasse pas par là mais le mLblNoTasks redeviens visible
             public void onChanged(ViewAction viewAction) {
                 if (viewAction == ViewAction.NO_TASK){
                     mLblNoTasks.setVisibility(View.VISIBLE);
@@ -75,11 +81,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 }
             }
         });
-        //TODO, passer par un ProjectUIModel???
+        //TODO : Pour remplir la liste du Spinner je voudrais le passé les projets qui sorte de la DB
+        //TODO, mais à j'ai une liste null ...
         mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
             @Override
             public void onChanged(List<Project> projects) {
-                mProjects = projects;
+                //mProjects = projects;
             }
         });
 
@@ -207,7 +214,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private void populateDialogSpinner() {
 
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mProjects);
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                mProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (mDialogSpinner != null) {
             mDialogSpinner.setAdapter(adapter);
