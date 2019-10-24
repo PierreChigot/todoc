@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 class MainViewModel extends ViewModel {
 
@@ -87,6 +88,7 @@ class MainViewModel extends ViewModel {
         return mProjectLiveData;
     }
 
+
     private void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, Integer sortingMethod) {
 
         List<TaskUIModel> uiModels = new ArrayList<>();
@@ -152,15 +154,6 @@ class MainViewModel extends ViewModel {
     }
 
 
-    /*private void initializeProjects() {
-        Project project1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
-        Project project2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
-        Project project3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
-        addProject(project1);
-        addProject(project2);
-        addProject(project3);
-    }*/
-
 
     void SortingTasks(int sortingType) {
         mSortingMethod = sortingType;
@@ -180,11 +173,16 @@ class MainViewModel extends ViewModel {
 
     }
 
-    private void addProject(Project project) {
+    /*private void addProject(Project project) {
 
         new InsertDataAsyncTask(mProjectDao, mTaskDao, null, project,mLastId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+    }*/
+    List<Project>getProjets() throws ExecutionException, InterruptedException {
+        return new GetProjectsDataAsyncTask(mProjectDao).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+
     }
+
 
     void deleteTask(long taskId) {
         new DeleteDataAsyncTask(mTaskDao, taskId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -246,24 +244,24 @@ class MainViewModel extends ViewModel {
             return null;
         }
     }
-/*
+    private static class GetProjectsDataAsyncTask extends AsyncTask<Void, Void, List<Project>> {
 
-    private class SortingMethod {
-        private int mSortingId;
+        @NonNull
+        private final ProjectDao mProjectDao;
 
-        private SortingMethod(int sortingId) {
-            mSortingId = sortingId;
+        private GetProjectsDataAsyncTask(@NonNull ProjectDao projectDao) {
+           mProjectDao = projectDao;
+
         }
 
-        private int getSortingId() {
-            return mSortingId;
+        @Override
+        protected List<Project> doInBackground(Void... voids) {
+            return mProjectDao.getProjects();
         }
 
-        private void setSortingId(int mSortingId) {
-            this.mSortingId = mSortingId;
-        }
+
     }
-*/
+
 
 
 

@@ -1,10 +1,5 @@
 @startuml
 
-
-
-
-
-
 class Project {
     {static}long: id [PK]
     ___

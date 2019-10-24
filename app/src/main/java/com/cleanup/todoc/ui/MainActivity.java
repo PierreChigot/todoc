@@ -20,21 +20,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.data.AppDatabase;
-import com.cleanup.todoc.data.ProjectDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     private MainViewModel mViewModel;
-    //private ProjectDao mProjectDao;
-    private Project[] mProjects = Project.getAllProjects();
-    //private List<Project> mProjects;
+    //private Project[] mProjects = Project.getAllProjects();
+    private List<Project> mProjectsAsync;
+    private List<Project> mProjects;
+
 
 
 
@@ -81,14 +81,24 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 }
             }
         });
-        //TODO : Pour remplir la liste du Spinner je voudrais le passé les projets qui sorte de la DB
-        //TODO, mais à j'ai une liste null ...
+
         mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
             @Override
             public void onChanged(List<Project> projects) {
-                //mProjects = projects;
+                mProjectsAsync = projects;
+
             }
         });
+        if (mProjectsAsync == null || mProjectsAsync.isEmpty()){
+
+            try {
+                mProjects = mViewModel.getProjets();
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else {
+            mProjects = mProjectsAsync;
+        }
 
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 showAddTaskDialog();
             }
         });
+
     }
 
     @Override
