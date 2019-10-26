@@ -154,7 +154,6 @@ public class Task {
     public static class TaskRecentComparator implements Comparator<Task> {
         @Override
         public int compare(Task left, Task right) {
-            //TODO on doit appuyer 2 fois sur le bouton pour que ça marche
             return (int) (right.creationTimestamp - left.creationTimestamp);
         }
     }

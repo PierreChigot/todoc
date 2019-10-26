@@ -41,7 +41,7 @@ class MainViewModel extends ViewModel {
 
     private Integer mSortingMethod = -1;
 
-    //TODO Est-ce qu'il faut un ContentProvider comme dans le cours OC ?
+
     MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
@@ -99,12 +99,14 @@ class MainViewModel extends ViewModel {
             //initializeProjects();
             return;
         }*/
-        if (tasks == null || tasks.isEmpty()) {
-            mSingleLiveDataEvent.setValue(ViewAction.NO_TASK);
+       if (tasks == null || tasks.isEmpty()) {
+           uiModels = new ArrayList<>();
+            //mSingleLiveDataEvent.setValue(ViewAction.NO_TASK);
+           mUiModelsLiveData.setValue(uiModels);
             return;
         }
         if (sortingMethod == null) {
-            sortingMethod = 1;
+            sortingMethod = 3;
         }
         if (sortingMethod == 1 ) {
             Collections.sort(tasks, new Task.TaskAZComparator());
@@ -128,12 +130,12 @@ class MainViewModel extends ViewModel {
                 }
             }
         } else if (sortingMethod == 4) {
+            Collections.sort(tasks, new Task.TaskRecentComparator());
             for (Task task : tasks) {
                 if (task.getProject() != null) {
                     uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
                 }
             }
-            Collections.sort(tasks, new Task.TaskRecentComparator());
         } else if (sortingMethod == 5) {
             for (Project project : projects) {
                 for (Task task : tasks) {
@@ -149,7 +151,7 @@ class MainViewModel extends ViewModel {
             }
         }
         mUiModelsLiveData.setValue(uiModels);
-        mSingleLiveDataEvent.setValue(ViewAction.SHOW_TASKS);
+        //mSingleLiveDataEvent.setValue(ViewAction.SHOW_TASKS);
         mProjectLiveData.setValue(projects);
     }
 

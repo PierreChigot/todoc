@@ -2,6 +2,7 @@ package com.cleanup.todoc.ui;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,9 +36,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     //private Project[] mProjects = Project.getAllProjects();
     private List<Project> mProjectsAsync;
     private List<Project> mProjects;
-
-
-
+    private boolean mShowTask;
+    Observer<ViewAction> mViewActionObserver;
 
 
     private final TasksAdapter mAdapter = new TasksAdapter(this);
@@ -62,25 +63,46 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         mListTasks.setAdapter(mAdapter);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
 
-        mViewModel.getUiModelsLiveData().observe(this,new Observer<List<TaskUIModel>>() {
+        mViewModel.getUiModelsLiveData().observe(this, new Observer<List<TaskUIModel>>() {
             @Override
             public void onChanged(List<TaskUIModel> taskUIModels) {
                 mAdapter.submitList(taskUIModels);
-            }
-        });
-        mViewModel.getViewActionMutableLiveData().observe(this, new Observer<ViewAction>() {
-            @Override
-            //TODO :  a la rotation de l'écran on ne repasse pas par là mais le mLblNoTasks redeviens visible
-            public void onChanged(ViewAction viewAction) {
-                if (viewAction == ViewAction.NO_TASK){
+                if (taskUIModels.isEmpty()){
                     mLblNoTasks.setVisibility(View.VISIBLE);
                     mListTasks.setVisibility(View.GONE);
-                }else if (viewAction == ViewAction.SHOW_TASKS) {
+                }else {
                     mLblNoTasks.setVisibility(View.GONE);
                     mListTasks.setVisibility(View.VISIBLE);
                 }
             }
         });
+       /* mViewActionObserver = new Observer<ViewAction>() {
+            @Override
+            public void onChanged(ViewAction viewAction) {
+                if (viewAction == ViewAction.NO_TASK) {
+
+                    mShowTask = false;
+                } else if (viewAction == ViewAction.SHOW_TASKS) {
+
+                    mShowTask = true;
+                }
+            }
+        };
+        mViewModel.getViewActionMutableLiveData().observe(this, mViewActionObserver);*/
+        /*mViewModel.getViewActionMutableLiveData().observe(this, new Observer<ViewAction>() {
+            @Override
+
+            public void onChanged(ViewAction viewAction) {
+
+            }
+        });
+        if (mShowTask) {
+            mLblNoTasks.setVisibility(View.GONE);
+            mListTasks.setVisibility(View.VISIBLE);
+        } else {
+            mLblNoTasks.setVisibility(View.VISIBLE);
+            mListTasks.setVisibility(View.GONE);
+        }*/
 
         mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
             @Override
@@ -89,14 +111,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
             }
         });
-        if (mProjectsAsync == null || mProjectsAsync.isEmpty()){
+        if (mProjectsAsync == null || mProjectsAsync.isEmpty()) {
 
             try {
                 mProjects = mViewModel.getProjets();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
-        }else {
+        } else {
             mProjects = mProjectsAsync;
         }
 
@@ -122,20 +144,22 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         if (id == R.id.filter_alphabetical) {
             mViewModel.SortingTasks(1);
         } else if (id == R.id.filter_alphabetical_inverted) {
-           mViewModel.SortingTasks(2);
+            mViewModel.SortingTasks(2);
         } else if (id == R.id.filter_oldest_first) {
-           mViewModel.SortingTasks(3);
+            mViewModel.SortingTasks(3);
         } else if (id == R.id.filter_recent_first) {
-           mViewModel.SortingTasks(4);
+            mViewModel.SortingTasks(4);
         } else if (id == R.id.filter_project)
             mViewModel.SortingTasks(5);
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onDeleteTask(long taskId) {
         mViewModel.deleteTask(taskId);
 
     }
+
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
         // If mDialog is open
         if (mDialogEditText != null && mDialogSpinner != null) {
@@ -164,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
-            else{
+            else {
                 dialogInterface.dismiss();
             }
         }
@@ -173,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             dialogInterface.dismiss();
         }
     }
+
     private void showAddTaskDialog() {
         final AlertDialog dialog = getAddTaskDialog();
 
@@ -234,5 +259,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         }
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mViewModel.getViewActionMutableLiveData().observe(this, mViewActionObserver );
+    }
 }
