@@ -6,10 +6,13 @@ import androidx.annotation.Nullable;
 
 public class TaskUIModel {
     private final long id;
+
+    // TODO PIERRE Annotations @NonNull
     private final String name;
     @ColorRes
     private final int colorRes;
 
+    // TODO PIERRE Annotations @NonNull
     public TaskUIModel(long id, String name, @ColorRes int colorRes) {
         this.id = id;
         this.name = name;
@@ -20,10 +23,12 @@ public class TaskUIModel {
         return id;
     }
 
+    // TODO PIERRE Annotations @NonNull
     public String getName() {
         return name;
     }
 
+    // TODO PIERRE Annotations @ColorRes
     public int getColorRes() {
         return colorRes;
     }

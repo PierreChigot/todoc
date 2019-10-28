@@ -19,7 +19,7 @@ public class Task {
      * The unique identifier of the task
      */
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private long id; // TODO PIERRE Tu peux mettre private long id = 0 ici pour éviter de t'embêter dans le constructeur à demander un id)
 
     /**
      * The unique identifier of the project associated to the task
@@ -30,6 +30,7 @@ public class Task {
     /**
      * The name of the task
      */
+    // TODO PIERRE SuppressWarnings A supprimer
     // Suppress warning because setName is called in constructor
     @SuppressWarnings("NullableProblems")
     @NonNull
@@ -49,6 +50,13 @@ public class Task {
      * @param creationTimestamp the timestamp when the task has been created to set
      */
     public Task(long id, long projectId, @NonNull String name, long creationTimestamp) {
+        // TODO PIERRE Ne pas utiliser les setters dans le constructeur.
+        //  Soit le constructeur a des paramètres et on a pas besoin des setters (c'est un objet simple),
+        //  soit le constructeur est vide et on utilise les setters (ce qui veut dire qu'il va y avoir de la transformation dans les setters)
+        //  Sachant que c'est de moins en moins le cas pour la seconde option,
+        //  on préfère que l'intelligence de transformation soit dans une autre classe, un pojo c'est débile normalement
+
+        // TODO PIERRE Pas besoin de demander l'ID
         this.setId(id);
         this.setProjectId(projectId);
         this.setName(name);
@@ -69,6 +77,7 @@ public class Task {
      *
      * @param id the unique idenifier of the task to set
      */
+    // TODO PIERRE A supprimer
     private void setId(long id) {
         this.id = id;
     }
@@ -78,6 +87,7 @@ public class Task {
      *
      * @param projectId the unique identifier of the project associated to the task to set
      */
+    // TODO PIERRE A supprimer
     private void setProjectId(long projectId) {
         this.projectId = projectId;
     }
@@ -87,6 +97,7 @@ public class Task {
      *
      * @return the project associated to the task
      */
+    // TODO PIERRE Fonction à supprimer
     @Nullable
     public Project getProject() {
         return Project.getProjectById(projectId);
@@ -107,6 +118,7 @@ public class Task {
      *
      * @param name the name of the task to set
      */
+    // TODO PIERRE A supprimer
     public void setName(@NonNull String name) {
         this.name = name;
     }
@@ -116,6 +128,7 @@ public class Task {
      *
      * @param creationTimestamp the timestamp when the task has been created to set
      */
+    // TODO PIERRE A supprimer
     private void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
@@ -131,6 +144,7 @@ public class Task {
     /**
      * Comparator to sort task from A to Z
      */
+    // TODO PIERRE A bouger dans une autre classe Utils je pense
     public static class TaskAZComparator implements Comparator<Task> {
         @Override
         public int compare(Task left, Task right) {

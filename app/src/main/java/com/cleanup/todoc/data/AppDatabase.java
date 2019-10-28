@@ -37,6 +37,9 @@ public abstract class AppDatabase extends RoomDatabase {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
+
+                        // TODO PIERRE Pas forcément besoin de cette méthode,
+                        //  tu as accès à ta base de donnée ici avec la variable passée en paramètre "db"
                         Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -63,6 +66,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;*/
     }
 
+    // TODO PIERRE C'était une meilleure idée que le 'Project.getAllProjects()' ;) )
    /* private void populateInitialData() {
         if (projectDao().count() == 0) {
             runInTransaction(new Runnable() {

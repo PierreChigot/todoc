@@ -19,6 +19,7 @@ import java.util.List;
 
 public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHolder> {
 
+    // TODO PIERRE Non nécessaire, sais-tu pourquoi ?
     @NonNull
     private List<Task> tasks;
 
@@ -26,13 +27,14 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
     @NonNull
     private final DeleteTaskListener mDeleteTaskListener;
 
-
+    // TODO PIERRE Annotations @NonNull
     TasksAdapter(DeleteTaskListener deleteTaskListener) {
         super(new DiffCallback());
         mDeleteTaskListener = deleteTaskListener;
 
     }
 
+    // TODO PIERRE Non nécessaire, sais-tu pourquoi ?
     void updateTasks(@NonNull final List<Task> tasks) {
         this.tasks = tasks;
         notifyDataSetChanged();

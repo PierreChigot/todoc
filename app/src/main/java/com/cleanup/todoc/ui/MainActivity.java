@@ -34,21 +34,40 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private MainViewModel mViewModel;
     //private Project[] mProjects = Project.getAllProjects();
+
+    // TODO PIERRE A supprimer, tout ce que doit faire l'Activity c'est écouter son ViewModel, rien d'autre !
     private List<Project> mProjectsAsync;
+
+    // TODO PIERRE A supprimer, tout ce que doit faire l'Activity c'est écouter son ViewModel, rien d'autre !
     private List<Project> mProjects;
+
+    // TODO PIERRE A supprimer
     private boolean mShowTask;
+
+    // TODO PIERRE A supprimer, non utilisé
     Observer<ViewAction> mViewActionObserver;
 
 
+    // TODO PIERRE Possible d'en faire une variable locale
     private final TasksAdapter mAdapter = new TasksAdapter(this);
+
+    // TODO PIERRE Possible d'en faire une variable locale
     @Nullable
     public AlertDialog mDialog = null;
+
+    // TODO PIERRE Possible d'en faire une variable locale
     @Nullable
     private EditText mDialogEditText = null;
+
+    // TODO PIERRE Possible d'en faire une variable locale
     @Nullable
     private Spinner mDialogSpinner = null;
+
+    // TODO PIERRE Possible d'en faire une variable locale
     @NonNull
     private RecyclerView mListTasks;
+
+    // TODO PIERRE Possible d'en faire une variable locale
     @NonNull
     private TextView mLblNoTasks;
 
@@ -59,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         mListTasks = findViewById(R.id.list_tasks);
         mLblNoTasks = findViewById(R.id.lbl_no_task);
 
+        // TODO PIERRE Plus simple :
+        //  mListTasks.setLayoutManager(new LinearLayoutManager(this));
         mListTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mListTasks.setAdapter(mAdapter);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
@@ -67,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             @Override
             public void onChanged(List<TaskUIModel> taskUIModels) {
                 mAdapter.submitList(taskUIModels);
+
+                // TODO PIERRE Normalement pas de if de ce genre dans la vue,
+                //  on exposerait plutôt un boolean (ou des valeur de setVisibility) dans le ViewModel
                 if (taskUIModels.isEmpty()){
                     mLblNoTasks.setVisibility(View.VISIBLE);
                     mListTasks.setVisibility(View.GONE);
@@ -104,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             mListTasks.setVisibility(View.GONE);
         }*/
 
+        // TODO PIERRE A supprimer jusqu'à la ligne 148 ("mProjects = mProjectsAsync;")
         mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
             @Override
             public void onChanged(List<Project> projects) {
@@ -149,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             mViewModel.SortingTasks(3);
         } else if (id == R.id.filter_recent_first) {
             mViewModel.SortingTasks(4);
+            // TODO PIERRE accolades
         } else if (id == R.id.filter_project)
             mViewModel.SortingTasks(5);
         return super.onOptionsItemSelected(item);
@@ -162,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
         // If mDialog is open
+        // TODO PIERRE "if" pas nécessaire, si tu cliques sur qqchose c'est non null
         if (mDialogEditText != null && mDialogSpinner != null) {
             // Get the name of the task
             String taskName = mDialogEditText.getText().toString();
@@ -172,12 +199,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 taskProject = (Project) mDialogSpinner.getSelectedItem();
             }
             // If a name has not been set
+            // TODO PIERRE A mettre dans le ViewModel cette règle de gestion
             if (taskName.trim().isEmpty()) {
                 mDialogEditText.setError(getString(R.string.empty_task_name));
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-
+                // TODO PIERRE A mettre dans le ViewModel
                 Task task = new Task(
                         -1,
                         taskProject.getId(),
@@ -185,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                         new Date().getTime()
                 );
                 mViewModel.addTask(task);
+
+                // TODO PIERRE A mettre dans le ViewModel, c'est une ViewAction
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
@@ -262,6 +292,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Override
     protected void onResume() {
         super.onResume();
+
+        // TODO PIERRE A mettre dans le onCreate comme "mViewModel.getUiModelsLiveData().observe"
+        //  Pas besoin d'utiliser un observer en variable de classe btw, une classe anonyme fera l'affaire
         mViewModel.getViewActionMutableLiveData().observe(this, mViewActionObserver );
     }
 }
