@@ -9,6 +9,7 @@
     android:paddingEnd="16dp"
     android:id="@+id/dialog">
 
+    <!-- TODO PIERRE UnusedAttribute A supprimer avec son namespace-->
     <EditText
         android:id="@+id/txt_task_name"
         android:layout_width="match_parent"

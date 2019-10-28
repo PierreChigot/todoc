@@ -19,6 +19,7 @@
         tools:tint="@sample/tasks.json/data/backgroundTint" />
 
 
+    <!-- TODO PIERRE Couleur de tint à extraire dans les resources -->
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img_delete"
         android:layout_width="48dp"

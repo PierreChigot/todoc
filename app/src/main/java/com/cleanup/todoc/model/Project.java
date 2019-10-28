@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey;
 /**
  * <p>Models for project in which tasks are included.</p>
  *
+ * TODO PIERRE Hmmm ? :D
  * @author Gaëtan HERFRAY
  */
 @Entity
@@ -17,6 +18,7 @@ public class Project {
      * The unique identifier of the project
      */
     @PrimaryKey
+    // TODO PIERRE Autoincrement peut nous faciliter la vie je pense
     private final long id;
 
     /**
@@ -49,6 +51,11 @@ public class Project {
      *
      * @return all the projects of the application
      */
+    // TODO PIERRE Nope nope nope, plus de static on a dit ! ^^
+    //  Ou alors du static pour injecter de la donnée mock, bien sur...
+    //  Sauf que c'est pas le cas, tu t'en sers aussi dans getProjectById(long)
+    //  Enfin, cette méthode n'a rien à faire dans le pojo ( / entity sur Room),
+    //  un POJO c'est juste une représentation d'un objet, ça n'a pas d'intelligence
     @NonNull
     public static Project[] getAllProjects() {
         return new Project[]{
@@ -65,6 +72,7 @@ public class Project {
      * @param id the unique identifier of the project to return
      * @return the project with the given unique identifier, or null if it has not been found
      */
+    // TODO PIERRE Fonction à supprimer
     @Nullable
     public static Project getProjectById(long id) {
         for (Project project : getAllProjects()) {
@@ -104,7 +112,8 @@ public class Project {
     }
 
 
-
+    // TODO PIERRE Oui c'est utilisé par l'ArrayAdapter mais... non, on préfère quand même avoir un "toString()" complet
+    //  qui a du sens techniquement. Override l'ArrayAdapter pour définir quoi afficher :)
     @Override
     @NonNull
     public String toString() {

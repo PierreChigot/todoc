@@ -16,6 +16,8 @@
         android:textSize="22sp"
         tools:visibility="gone" />
 
+    <!-- TODO PIERRE Attention paddingBottom -->
+    <!-- TODO PIERRE Attention itemCount pas forcément nécessaire (et ça cache un bug justement) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_tasks"
         android:layout_width="match_parent"

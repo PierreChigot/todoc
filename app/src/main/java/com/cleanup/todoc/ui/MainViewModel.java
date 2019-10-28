@@ -30,6 +30,8 @@ class MainViewModel extends ViewModel {
     private ProjectDao mProjectDao;
     @NonNull
     private TaskDao mTaskDao;
+
+    // TODO PIERRE A supprimer
     private long mLastId = -1;
 
 
@@ -39,6 +41,7 @@ class MainViewModel extends ViewModel {
     private final MutableLiveData<Integer> mSortingMethodLiveData = new MutableLiveData<>();
 
 
+    // TODO PIERRE Un enum ici serait très appréciable pour bien voir les différents types de sorting supportés
     private Integer mSortingMethod = -1;
 
 
@@ -80,10 +83,12 @@ class MainViewModel extends ViewModel {
         return mUiModelsLiveData;
     }
 
+    // TODO PIERRE "mutable" dans le nom de la fonction
     LiveData<ViewAction> getViewActionMutableLiveData() {
         return mSingleLiveDataEvent;
     }
 
+    // TODO PIERRE A supprimer
     MutableLiveData<List<Project>> getProjectLiveData(){
         return mProjectLiveData;
     }
@@ -102,12 +107,17 @@ class MainViewModel extends ViewModel {
        if (tasks == null || tasks.isEmpty()) {
            uiModels = new ArrayList<>();
             //mSingleLiveDataEvent.setValue(ViewAction.NO_TASK);
+
+           // TODO PIERRE C'est là qu'on exposerait un boolean "pas de task" (see MainActivity:93)
            mUiModelsLiveData.setValue(uiModels);
             return;
         }
         if (sortingMethod == null) {
             sortingMethod = 3;
         }
+
+        // TODO PIERRE Un switch serait mieux je pense
+        //  Avec un petit coup de refactor aussi
         if (sortingMethod == 1 ) {
             Collections.sort(tasks, new Task.TaskAZComparator());
             for (Task task : tasks) {
@@ -156,7 +166,7 @@ class MainViewModel extends ViewModel {
     }
 
 
-
+    // TODO PIERRE Attention majuscule
     void SortingTasks(int sortingType) {
         mSortingMethod = sortingType;
 
@@ -164,6 +174,8 @@ class MainViewModel extends ViewModel {
 
     }
 
+    // TODO PIERRE Il faut que tu passes le project et la task dans cette fonction
+    //  et que tu fasses ton mapping dedans en allant piocher dans chacun des objets les informations qu'il te faut
     private TaskUIModel map(long id, String name, int color) {
 
         return new TaskUIModel(id, name, color);
@@ -180,6 +192,7 @@ class MainViewModel extends ViewModel {
         new InsertDataAsyncTask(mProjectDao, mTaskDao, null, project,mLastId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }*/
+    // TODO PIERRE A supprimer
     List<Project>getProjets() throws ExecutionException, InterruptedException {
         return new GetProjectsDataAsyncTask(mProjectDao).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
@@ -201,8 +214,10 @@ class MainViewModel extends ViewModel {
 
         private final Project mProject;
 
+        // TODO PIERRE A supprimer
         private final long mLastTaskId;
 
+        // TODO PIERRE Annotations @NonNull
         private InsertDataAsyncTask(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao, Task task, Project project, long lastTaskId) {
             mProjectDao = projectDao;
             mTaskDao = taskDao;
@@ -213,11 +228,17 @@ class MainViewModel extends ViewModel {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            // TODO PIERRE Annotations @NonNull
             if (mProject != null) {
+                // TODO PIERRE
+                //  long idNewProject = mProjectDao.createProject(mProject);
                 mProjectDao.createProject(mProject);
             }
+            // TODO PIERRE Annotations @NonNull
             if (mTask != null) {
+                // TODO PIERRE Non nécessaire
                 Task task = new Task(mLastTaskId +1,mTask.getProjectId(), mTask.getName(), mTask.getCreationTimestamp());
+
                 mTaskDao.insertTask(task);
             }
 
@@ -246,6 +267,8 @@ class MainViewModel extends ViewModel {
             return null;
         }
     }
+
+    // TODO Classe à supprimer
     private static class GetProjectsDataAsyncTask extends AsyncTask<Void, Void, List<Project>> {
 
         @NonNull
