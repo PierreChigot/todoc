@@ -1,9 +1,7 @@
 package com.cleanup.todoc.ui;
 
 public enum ViewAction {
-    NO_TASK,
-
-    SHOW_TASKS
-
-
+    SHOW_DIALOG,
+    ERROR_TASK_NAME,
+    DIALOG_DISMISS
 }

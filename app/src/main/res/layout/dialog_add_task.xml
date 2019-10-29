@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -15,8 +14,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/task_name_hint"
         android:importantForAutofill="no"
-        android:inputType="textAutoComplete"
-        tools:ignore="UnusedAttribute" />
+        android:inputType="textAutoComplete" />
 
     <Spinner
         android:id="@+id/project_spinner"

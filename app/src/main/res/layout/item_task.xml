@@ -16,7 +16,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/bkg_oval"
-        tools:tint="@sample/tasks.json/data/backgroundTint" />
+        tools:tint="@color/colorPrimary"/>
+<!--        tools:tint="@sample/tasks.json/data/backgroundTint" -->
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -31,7 +32,7 @@
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_delete"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        app:tint="#DE000000" />
+        app:tint="@color/design_default_color_primary_dark"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -50,7 +51,7 @@
             android:lines="1"
             android:textStyle="bold"
             android:textSize="16sp"
-            tools:text="@sample/tasks.json/data/taskName" />
+            tools:text="@string/task_name_hint" />
 
         <TextView
             android:id="@+id/lbl_project_name"
@@ -60,6 +61,6 @@
             android:ellipsize="end"
             android:textSize="16sp"
             android:lines="1"
-            tools:text="@sample/tasks.json/data/projectName" />
+            tools:text="project name" />
     </LinearLayout>
 </RelativeLayout>

@@ -1,16 +1,19 @@
 package com.cleanup.todoc.ui;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
 public class TaskUIModel {
     private final long id;
+    @NonNull
     private final String name;
     @ColorRes
     private final int colorRes;
 
-    public TaskUIModel(long id, String name, @ColorRes int colorRes) {
+
+    TaskUIModel(long id, @NonNull String name, @ColorRes int colorRes) {
         this.id = id;
         this.name = name;
         this.colorRes = colorRes;
@@ -20,11 +23,13 @@ public class TaskUIModel {
         return id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public int getColorRes() {
+    @ColorRes
+    int getColorRes() {
         return colorRes;
     }
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,30 +14,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.model.Task;
 
-import java.util.List;
 
 public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHolder> {
 
-    @NonNull
-    private List<Task> tasks;
+
 
 
     @NonNull
     private final DeleteTaskListener mDeleteTaskListener;
 
 
-    TasksAdapter(DeleteTaskListener deleteTaskListener) {
+    TasksAdapter(@NonNull DeleteTaskListener deleteTaskListener) {
         super(new DiffCallback());
         mDeleteTaskListener = deleteTaskListener;
 
     }
 
-    void updateTasks(@NonNull final List<Task> tasks) {
-        this.tasks = tasks;
-        notifyDataSetChanged();
-    }
 
     @NonNull
     @Override
@@ -59,17 +53,17 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
         private final AppCompatImageView mDeleteButton;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             mNameTask = itemView.findViewById(R.id.lbl_task_name);
             mImgProject = itemView.findViewById(R.id.img_project);
             mProjectName = itemView.findViewById(R.id.lbl_project_name);
             mDeleteButton = itemView.findViewById(R.id.img_delete);
         }
-
+        //TODO Suppress : @SuppressLint
+        @SuppressLint("ResourceAsColor")
         void bind(final TaskUIModel model, final DeleteTaskListener listener) {
             mNameTask.setText(model.getName());
-
 
             mImgProject.setSupportImageTintList(ColorStateList.valueOf(model.getColorRes()));
             //mProjectName.setText(taskProject.getName());

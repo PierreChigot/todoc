@@ -9,7 +9,6 @@ import androidx.room.PrimaryKey;
 /**
  * <p>Models for project in which tasks are included.</p>
  *
- * @author Gaëtan HERFRAY
  */
 @Entity
 public class Project {
@@ -17,6 +16,7 @@ public class Project {
      * The unique identifier of the project
      */
     @PrimaryKey
+            (autoGenerate = true)
     private final long id;
 
     /**
@@ -44,11 +44,12 @@ public class Project {
         this.color = color;
     }
 
-    /**
+/**
      * Returns all the projects of the application.
      *
      * @return all the projects of the application
      */
+
     @NonNull
     public static Project[] getAllProjects() {
         return new Project[]{
@@ -58,13 +59,15 @@ public class Project {
         };
     }
 
-    /**
+
+/**
      * Returns the project with the given unique identifier, or null if no project with that
      * identifier can be found.
      *
      * @param id the unique identifier of the project to return
      * @return the project with the given unique identifier, or null if it has not been found
      */
+//TODO A supprimmer
     @Nullable
     public static Project getProjectById(long id) {
         for (Project project : getAllProjects()) {
@@ -73,6 +76,7 @@ public class Project {
         }
         return null;
     }
+
 
     /**
      * Returns the unique identifier of the project.

@@ -23,104 +23,70 @@ import android.widget.TextView;
 
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
-import com.cleanup.todoc.model.Task;
-
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     private MainViewModel mViewModel;
-    //private Project[] mProjects = Project.getAllProjects();
-    private List<Project> mProjectsAsync;
-    private List<Project> mProjects;
-    private boolean mShowTask;
-    Observer<ViewAction> mViewActionObserver;
 
 
-    private final TasksAdapter mAdapter = new TasksAdapter(this);
     @Nullable
-    public AlertDialog mDialog = null;
+    private AlertDialog mDialog = null;
     @Nullable
     private EditText mDialogEditText = null;
     @Nullable
     private Spinner mDialogSpinner = null;
-    @NonNull
-    private RecyclerView mListTasks;
-    @NonNull
-    private TextView mLblNoTasks;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mListTasks = findViewById(R.id.list_tasks);
+        final TasksAdapter tasksAdapter = new TasksAdapter(this);
+        final RecyclerView listTasks;
+        final TextView mLblNoTasks;
+        listTasks = findViewById(R.id.list_tasks);
         mLblNoTasks = findViewById(R.id.lbl_no_task);
-
-        mListTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mListTasks.setAdapter(mAdapter);
+        listTasks.setLayoutManager(new LinearLayoutManager(this));
+        listTasks.setAdapter(tasksAdapter);
         mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
 
         mViewModel.getUiModelsLiveData().observe(this, new Observer<List<TaskUIModel>>() {
             @Override
             public void onChanged(List<TaskUIModel> taskUIModels) {
-                mAdapter.submitList(taskUIModels);
-                if (taskUIModels.isEmpty()){
-                    mLblNoTasks.setVisibility(View.VISIBLE);
-                    mListTasks.setVisibility(View.GONE);
-                }else {
-                    mLblNoTasks.setVisibility(View.GONE);
-                    mListTasks.setVisibility(View.VISIBLE);
+                tasksAdapter.submitList(taskUIModels);
+            }
+        });
+        mViewModel.getViewActionLiveData().observe(this, new Observer<ViewAction>() {
+            @Override
+            public void onChanged(ViewAction viewAction) {
+                switch (viewAction) {
+                    case ERROR_TASK_NAME:
+                        assert mDialogEditText != null;
+                        mDialogEditText.setError(getString(R.string.empty_task_name));
+                        break;
+                    case SHOW_DIALOG:
+                        break;
+                    case DIALOG_DISMISS:
+                        assert mDialog != null;
+                        mDialog.dismiss();
+                        break;
                 }
             }
         });
-       /* mViewActionObserver = new Observer<ViewAction>() {
-            @Override
-            public void onChanged(ViewAction viewAction) {
-                if (viewAction == ViewAction.NO_TASK) {
-
-                    mShowTask = false;
-                } else if (viewAction == ViewAction.SHOW_TASKS) {
-
-                    mShowTask = true;
-                }
-            }
-        };
-        mViewModel.getViewActionMutableLiveData().observe(this, mViewActionObserver);*/
-        /*mViewModel.getViewActionMutableLiveData().observe(this, new Observer<ViewAction>() {
-            @Override
-
-            public void onChanged(ViewAction viewAction) {
-
-            }
-        });
-        if (mShowTask) {
-            mLblNoTasks.setVisibility(View.GONE);
-            mListTasks.setVisibility(View.VISIBLE);
-        } else {
-            mLblNoTasks.setVisibility(View.VISIBLE);
-            mListTasks.setVisibility(View.GONE);
-        }*/
-
-        mViewModel.getProjectLiveData().observe(this, new Observer<List<Project>>() {
-            @Override
-            public void onChanged(List<Project> projects) {
-                mProjectsAsync = projects;
-
-            }
-        });
-        if (mProjectsAsync == null || mProjectsAsync.isEmpty()) {
-
-            try {
-                mProjects = mViewModel.getProjets();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            mProjects = mProjectsAsync;
-        }
+       mViewModel.getNoTaskLiveData().observe(this, new Observer<Boolean>() {
+           @Override
+           public void onChanged(Boolean noTask) {
+               if (noTask){
+                   mLblNoTasks.setVisibility(View.VISIBLE);
+                   listTasks.setVisibility(View.GONE);
+               }else {
+                   mLblNoTasks.setVisibility(View.GONE);
+                   listTasks.setVisibility(View.VISIBLE);
+               }
+           }
+       });
 
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,60 +108,35 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            mViewModel.SortingTasks(1);
+            mViewModel.sortingTasks(SortingMethod.ALPHABETICAL);
         } else if (id == R.id.filter_alphabetical_inverted) {
-            mViewModel.SortingTasks(2);
+            mViewModel.sortingTasks(SortingMethod.ALPHABETICAL_INVERTED);
         } else if (id == R.id.filter_oldest_first) {
-            mViewModel.SortingTasks(3);
+            mViewModel.sortingTasks(SortingMethod.OLD_FIRST);
         } else if (id == R.id.filter_recent_first) {
-            mViewModel.SortingTasks(4);
-        } else if (id == R.id.filter_project)
-            mViewModel.SortingTasks(5);
+            mViewModel.sortingTasks(SortingMethod.RECENT_FIRST);
+        } else if (id == R.id.filter_project) {
+            mViewModel.sortingTasks(SortingMethod.PROJECT);
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onDeleteTask(long taskId) {
         mViewModel.deleteTask(taskId);
-
     }
 
-    private void onPositiveButtonClick(DialogInterface dialogInterface) {
-        // If mDialog is open
-        if (mDialogEditText != null && mDialogSpinner != null) {
-            // Get the name of the task
-            String taskName = mDialogEditText.getText().toString();
+    private void onPositiveButtonClick() {
 
-            // Get the selected project to be associated to the task
-            Project taskProject = null;
-            if (mDialogSpinner.getSelectedItem() instanceof Project) {
-                taskProject = (Project) mDialogSpinner.getSelectedItem();
-            }
-            // If a name has not been set
-            if (taskName.trim().isEmpty()) {
-                mDialogEditText.setError(getString(R.string.empty_task_name));
-            }
-            // If both project and name of the task have been set
-            else if (taskProject != null) {
-
-                Task task = new Task(
-                        -1,
-                        taskProject.getId(),
-                        taskName,
-                        new Date().getTime()
-                );
-                mViewModel.addTask(task);
-                dialogInterface.dismiss();
-            }
-            // If name has been set, but project has not been set (this should never occur)
-            else {
-                dialogInterface.dismiss();
-            }
+        assert mDialogEditText != null;
+        String taskName = mDialogEditText.getText().toString();
+        Project taskProject = null;
+        assert mDialogSpinner != null;
+        if (mDialogSpinner.getSelectedItem() instanceof Project) {
+            taskProject = (Project) mDialogSpinner.getSelectedItem();
         }
-        // If mDialog is already closed
-        else {
-            dialogInterface.dismiss();
-        }
+        assert taskProject != null;
+        mViewModel.addTask(taskProject.getId(), taskName);
     }
 
     private void showAddTaskDialog() {
@@ -239,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
                     @Override
                     public void onClick(View view) {
-                        onPositiveButtonClick(mDialog);
+                        onPositiveButtonClick();
                     }
                 });
             }
@@ -252,16 +193,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
-                mProjects);
+                //TODO livedata pour projects
+                Project.getAllProjects());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (mDialogSpinner != null) {
             mDialogSpinner.setAdapter(adapter);
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mViewModel.getViewActionMutableLiveData().observe(this, mViewActionObserver );
-    }
+
 }

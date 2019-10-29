@@ -30,7 +30,7 @@ public class DaoTest {
 
     private static long TASK_ID = 1;
     private static Project PROJECT_1 = new Project(4L, "PROJECT 1", 0xFFEADAD1);
-    private static Task TASK_1_PROJECT_1 = new Task(1, 4L, "task 1", new Date().getTime());
+    private static Task TASK_1_PROJECT_1 = new Task(4L, "task 1", new Date().getTime());
 
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
