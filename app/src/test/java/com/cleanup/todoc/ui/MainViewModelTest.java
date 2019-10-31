@@ -2,6 +2,7 @@ package com.cleanup.todoc.ui;
 import android.content.Context;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ApplicationProvider;
 
 
@@ -18,41 +19,37 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Date;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 
 public class MainViewModelTest {
 
 
-    private AppDatabase mDatabase;
-    private TaskDao mTaskDao;
-    private ProjectDao mProjectDao;
-
-    private static long TASK_ID = 1;
-    private static Project PROJECT_1 = new Project(4L, "PROJECT 1", 0xFFEADAD1);
-    private static Task TASK_1_PROJECT_1 = new Task(4L, "task 1", new Date().getTime());
-
     @Rule
     public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
+    private MainViewModel viewModel;
 
+    private MutableLiveData<List<Project>> mProjectLiveData;
+    private MutableLiveData<List<Task>> mTaskLiveData;
     @Before
-    public void createDb() {
+    public void setup() {
+        ProjectDao projectDao = Mockito.mock(ProjectDao.class);
+        TaskDao taskDao = Mockito.mock(TaskDao.class);
 
-        Context context = ApplicationProvider.getApplicationContext();
-        this.mDatabase = Room.inMemoryDatabaseBuilder(context,
-                AppDatabase.class).allowMainThreadQueries().build();
-        mTaskDao = mDatabase.taskDao();
-        mProjectDao = mDatabase.projectDao();
-        mTaskDao.deleteAll();
+        mProjectLiveData = new MutableLiveData<>();
+        mTaskLiveData = new MutableLiveData<>();
+
+        Mockito.doReturn(mProjectLiveData).when(projectDao).getProjectsLiveData();
+        Mockito.doReturn(mTaskLiveData).when(taskDao).getTasksLiveData();
+
+        viewModel = new MainViewModel(projectDao, taskDao);
+
     }
-
-    @After
-    public void closeDb() {
-        mDatabase.close();
-    }
-
 
     @Test
     public void sortingTasks() {
@@ -65,10 +62,10 @@ public class MainViewModelTest {
         final Task task2 = new Task(2, "task 2", new Date().getTime());
         final Task task3 = new Task(3, "task 3", new Date().getTime());
         final Task task4 = new Task(4, "task 4", new Date().getTime());
-        viewModel.addTask(, TASK_1_PROJECT_1, );
+       // viewModel.addTask(, TASK_1_PROJECT_1, );
         assertEquals(1,viewModel.getUiModelsLiveData().getValue().get(0).getId());
     }
-//TODO mock db ou test instru pour view model
+
     @Test
     public void getProjets() {
     }

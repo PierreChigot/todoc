@@ -1,13 +1,16 @@
 package com.cleanup.todoc.ui;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.cleanup.todoc.data.ProjectDao;
@@ -39,7 +42,7 @@ class MainViewModel extends ViewModel {
     private final MutableLiveData<SortingMethod> mSortingMethodLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNoTaskLiveData = new MutableLiveData<>();
 
-
+    private final LiveData<List<Project>> mProjectsNameLiveData;
     private SortingMethod mSortingMethod;
 
 
@@ -47,7 +50,17 @@ class MainViewModel extends ViewModel {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
         wireUpMediator();
-
+        mProjectsNameLiveData = mProjectDao.getProjectsLiveData();
+       /* mProjectsNameLiveData = Transformations.map(mProjectDao.getProjectsLiveData(), new Function<List<Project>, List<String>>() {
+            @Override
+            public List<String> apply(List<Project> projects) {
+                List<String> projectsName = new ArrayList<>();
+                for (Project project : projects) {
+                    projectsName.add(project.getName());
+                }
+                return projectsName;
+            }
+        });*/
     }
 
     private void wireUpMediator() {
@@ -89,13 +102,17 @@ class MainViewModel extends ViewModel {
         return mNoTaskLiveData;
     }
 
+    LiveData<List<Project>> getProjectsNameLiveData() {
+        return mProjectsNameLiveData;
+    }
 
-    private void combineProjectsAndTasks(List<Project> projects, List<Task> tasks, SortingMethod sortingMethod) {
+
+    private void combineProjectsAndTasks(@Nullable List<Project> projects, @Nullable List<Task> tasks, @Nullable SortingMethod sortingMethod) {
 
         List<TaskUIModel> uiModels = new ArrayList<>();
 
 
-        if (tasks == null || tasks.isEmpty()) {
+        if (tasks == null || tasks.isEmpty()|| projects == null || projects.isEmpty()) {
             uiModels = new ArrayList<>();
             mUiModelsLiveData.setValue(uiModels);
             mNoTaskLiveData.setValue(true);
@@ -104,36 +121,45 @@ class MainViewModel extends ViewModel {
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.OLD_FIRST;
         }
+
         switch (sortingMethod) {
             case ALPHABETICAL:
                 Collections.sort(tasks, new TaskComparator.TaskAZComparator());
                 for (Task task : tasks) {
-                    if (task.getProject() != null) {
-                        uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                    for (Project project : projects) {
+                        if (project.getId() == task.getProjectId()) {
+                            uiModels.add(map(project, task));
+                        }
                     }
                 }
                 break;
             case ALPHABETICAL_INVERTED:
                 Collections.sort(tasks, new TaskComparator.TaskZAComparator());
-                for (Task task : tasks) {
-                    if (task.getProject() != null) {
-                        uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                for (Task task : tasks){
+                    for (Project project : projects){
+                        if (project.getId() == task.getProjectId()) {
+                            uiModels.add(map(project, task));
+                        }
                     }
                 }
                 break;
             case OLD_FIRST:
                 Collections.sort(tasks, new TaskComparator.TaskOldComparator());
                 for (Task task : tasks) {
-                    if (task.getProject() != null) {
-                        uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                    for (Project project : projects) {
+                        if (project.getId() == task.getProjectId()) {
+                            uiModels.add(map(project, task));
+                        }
                     }
                 }
                 break;
             case RECENT_FIRST:
                 Collections.sort(tasks, new TaskComparator.TaskRecentComparator());
                 for (Task task : tasks) {
-                    if (task.getProject() != null) {
-                        uiModels.add(map(task.getId(), task.getName(), task.getProject().getColor()));
+                    for (Project project : projects) {
+                        if (project.getId() == task.getProjectId()) {
+                            uiModels.add(map(project, task));
+                        }
                     }
                 }
                 break;
@@ -141,7 +167,7 @@ class MainViewModel extends ViewModel {
                 for (Project project : projects) {
                     for (Task task : tasks) {
                         if (project.getId() == task.getProjectId()) {
-                            uiModels.add(map(project.getId(), task.getName(), project.getColor()));
+                            uiModels.add(map(project, task));
                         }
                     }
                 }
@@ -159,17 +185,12 @@ class MainViewModel extends ViewModel {
         mSortingMethodLiveData.setValue(mSortingMethod);
 
     }
-    private TaskUIModel map2 (Project project, Task task){
-        long id = 0;
-        String name = "";
-        int color = 0;
 
+    private TaskUIModel map(Project project, Task task) {
 
-        return new TaskUIModel(id, name, color);
-    }
-    private TaskUIModel map(long id, String name, int color) {
-        //TODO Il faut que tu passes le project et la task dans cette fonction
-        //  et que tu fasses ton mapping dedans en allant piocher dans chacun des objets les informations qu'il te faut
+        long id = task.getId();
+        String name = task.getName();
+        int color = project.getColor();
         mNoTaskLiveData.setValue(false);
         return new TaskUIModel(id, name, color);
     }
@@ -180,7 +201,7 @@ class MainViewModel extends ViewModel {
             mSingleLiveEvent.setValue(ViewAction.ERROR_TASK_NAME);
         } else {
             Task task = new Task(projectId, taskName, new Date().getTime());
-            new InsertDataAsyncTask(mProjectDao, mTaskDao, task, projectId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new InsertDataAsyncTask(mTaskDao, task, projectId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mSingleLiveEvent.setValue(ViewAction.DIALOG_DISMISS);
         }
     }
@@ -199,7 +220,7 @@ class MainViewModel extends ViewModel {
         private final long mProjectId;
 
 
-        private InsertDataAsyncTask(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao,
+        private InsertDataAsyncTask(@NonNull TaskDao taskDao,
                                     @NonNull Task task, @NonNull Long projectId) {
             mTaskDao = taskDao;
             mTask = task;

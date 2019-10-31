@@ -33,7 +33,6 @@ public class Task {
        this.name = name;
        this.creationTimestamp = creationTimestamp;
     }
-    //TODO ne compile pas s'il n'a pas les setters..
     public void setId(long id) {
         this.id = id;
     }
@@ -48,12 +47,6 @@ public class Task {
 
     public long getId() {
         return id;
-    }
-
-
-    @Nullable
-    public Project getProject() {
-        return Project.getProjectById(projectId);
     }
 
 

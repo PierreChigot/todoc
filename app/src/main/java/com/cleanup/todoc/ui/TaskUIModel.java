@@ -1,36 +1,37 @@
 package com.cleanup.todoc.ui;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
 public class TaskUIModel {
-    private final long id;
+    private final long mId;
     @NonNull
-    private final String name;
-    @ColorRes
-    private final int colorRes;
+    private final String mName;
+    @ColorInt
+    private final int mColorRes;
 
 
-    TaskUIModel(long id, @NonNull String name, @ColorRes int colorRes) {
-        this.id = id;
-        this.name = name;
-        this.colorRes = colorRes;
+    TaskUIModel(long id, @NonNull String name, @ColorInt int colorRes) {
+        this.mId = id;
+        this.mName = name;
+        this.mColorRes = colorRes;
     }
 
     public long getId() {
-        return id;
+        return mId;
     }
 
     @NonNull
     public String getName() {
-        return name;
+        return mName;
     }
 
-    @ColorRes
+    @ColorInt
     int getColorRes() {
-        return colorRes;
+        return mColorRes;
     }
 
     @Override
@@ -38,8 +39,8 @@ public class TaskUIModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskUIModel that = (TaskUIModel) o;
-        return id == that.id &&
-                name.equals(that.name) && colorRes == that.colorRes;
+        return mId == that.mId &&
+                mName.equals(that.mName) && mColorRes == that.mColorRes;
 
     }
 }

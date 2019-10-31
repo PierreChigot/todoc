@@ -1,0 +1,35 @@
+@startuml
+:Personnel de Cleanup:
+:Chef d'équipe: as Admin
+:Opérateur: as User
+
+(Personnel de Cleanup) <|-- Admin
+(Personnel de Cleanup) <|-- User
+
+rectangle TodocApp {
+
+
+usecase UC1 as "..Ajout des tâches..
+en correspondance à un projet"
+
+usecase UC2 as "Visualisation des tâches
+et
+..Trie des tâches..
+Par ordre chronologique
+Par ordre alphabétique
+Par projet"
+
+usecase UC3 as "Suppression des tâches"
+}
+
+Admin --> (UC1)
+User --> (UC1)
+
+Admin --> (UC2)
+User --> (UC2)
+
+Admin --> (UC3)
+User --> (UC3)
+
+
+@enduml

@@ -40,14 +40,10 @@ import static com.cleanup.todoc.TestUtils.withRecyclerView;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @author Gaëtan HERFRAY
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
+
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
 
@@ -89,6 +85,7 @@ public class MainActivityInstrumentedTest {
         // Check that recyclerView is displayed
         assertThat(listTasks.getVisibility(), equalTo(View.VISIBLE));
         // Check that it contains one element only
+        assertNotNull(listTasks.getAdapter());
         assertThat(listTasks.getAdapter().getItemCount(), equalTo(1));
 
         onView(withId(R.id.img_delete)).perform(click());
