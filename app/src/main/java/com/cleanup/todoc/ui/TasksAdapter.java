@@ -48,7 +48,6 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
 
         private final TextView mNameTask;
         private final AppCompatImageView mImgProject;
-        private final TextView mProjectName;
         private final AppCompatImageView mDeleteButton;
 
 
@@ -56,7 +55,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
             super(itemView);
             mNameTask = itemView.findViewById(R.id.lbl_task_name);
             mImgProject = itemView.findViewById(R.id.img_project);
-            mProjectName = itemView.findViewById(R.id.lbl_project_name);
+            //TextView projectName = itemView.findViewById(R.id.lbl_project_name);
             mDeleteButton = itemView.findViewById(R.id.img_delete);
         }
 
