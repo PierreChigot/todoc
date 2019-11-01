@@ -1,16 +1,14 @@
 package com.cleanup.todoc.ui;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.util.Function;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.cleanup.todoc.data.ProjectDao;
@@ -173,7 +171,6 @@ class MainViewModel extends ViewModel {
                 }
                 break;
         }
-
         mUiModelsLiveData.setValue(uiModels);
         mProjectLiveData.setValue(projects);
     }

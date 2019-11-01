@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,12 +59,11 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
             mProjectName = itemView.findViewById(R.id.lbl_project_name);
             mDeleteButton = itemView.findViewById(R.id.img_delete);
         }
-        //TODO Suppress : @SuppressLint
-        @SuppressLint("ResourceAsColor")
+
         void bind(final TaskUIModel model, final DeleteTaskListener listener) {
             mNameTask.setText(model.getName());
 
-            mImgProject.setSupportImageTintList(ColorStateList.valueOf(model.getColorRes()));
+            mImgProject.setSupportImageTintList(ColorStateList.valueOf(model.getColorInt()));
             //mProjectName.setText(taskProject.getName());
 
             //imgProject.setVisibility(View.INVISIBLE);

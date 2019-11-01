@@ -1,7 +1,6 @@
 package com.cleanup.todoc.ui;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,13 +10,13 @@ public class TaskUIModel {
     @NonNull
     private final String mName;
     @ColorInt
-    private final int mColorRes;
+    private final int mColorInt;
 
 
-    TaskUIModel(long id, @NonNull String name, @ColorInt int colorRes) {
+    TaskUIModel(long id, @NonNull String name, @ColorInt int colorInt) {
         this.mId = id;
         this.mName = name;
-        this.mColorRes = colorRes;
+        this.mColorInt = colorInt;
     }
 
     public long getId() {
@@ -30,8 +29,8 @@ public class TaskUIModel {
     }
 
     @ColorInt
-    int getColorRes() {
-        return mColorRes;
+    int getColorInt() {
+        return mColorInt;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class TaskUIModel {
         if (o == null || getClass() != o.getClass()) return false;
         TaskUIModel that = (TaskUIModel) o;
         return mId == that.mId &&
-                mName.equals(that.mName) && mColorRes == that.mColorRes;
+                mName.equals(that.mName) && mColorInt == that.mColorInt;
 
     }
 }

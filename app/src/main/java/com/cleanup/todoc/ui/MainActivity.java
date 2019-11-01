@@ -29,7 +29,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     private MainViewModel mViewModel;
-    private List<Project> mProjectsName;
+    private List<Project> mProjects;
 
 
     @Nullable
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
        mViewModel.getProjectsNameLiveData().observe(this, new Observer<List<Project>>() {
            @Override
            public void onChanged(List<Project> projects) {
-              mProjectsName = projects;
+              mProjects = projects;
            }
        });
 
@@ -200,8 +200,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
-                //TODO livedata pour projects
-                mProjectsName);
+                mProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (mDialogSpinner != null) {
             mDialogSpinner.setAdapter(adapter);

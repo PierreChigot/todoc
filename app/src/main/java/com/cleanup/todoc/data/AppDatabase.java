@@ -47,10 +47,6 @@ public abstract class AppDatabase extends RoomDatabase {
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
 
-                /*Project project1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
-                Project project2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
-                Project project3 = new Project(3L, "Projet Circus", 0xFFA3CED2);*/
-
                 ContentValues project1 = new ContentValues();
                 project1.put("id", 1L);
                 project1.put("name", "Projet Tartampion");
