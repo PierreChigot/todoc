@@ -1,6 +1,6 @@
-package com.cleanup.todocChigot.ui;
+package com.cleanup.todocChigot.viewModel;
 
-enum SortingMethod {
+public enum SortingMethod {
     /**
      * Sort alphabetical by name
      */

@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot.utils;
+package com.cleanup.todocChigot.viewModel;
 
 import com.cleanup.todocChigot.model.Task;
 

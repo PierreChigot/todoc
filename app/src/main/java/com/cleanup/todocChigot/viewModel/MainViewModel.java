@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot.ui;
+package com.cleanup.todocChigot.viewModel;
 
 import android.os.AsyncTask;
 
@@ -15,8 +15,6 @@ import com.cleanup.todocChigot.data.ProjectDao;
 import com.cleanup.todocChigot.data.TaskDao;
 import com.cleanup.todocChigot.model.Project;
 import com.cleanup.todocChigot.model.Task;
-import com.cleanup.todocChigot.utils.SingleLiveEvent;
-import com.cleanup.todocChigot.utils.TaskComparator;
 
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-class MainViewModel extends ViewModel {
+public class MainViewModel extends ViewModel {
 
 
     @NonNull
@@ -43,7 +41,7 @@ class MainViewModel extends ViewModel {
     private SortingMethod mSortingMethod;
 
 
-    MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
+    public MainViewModel(@NonNull ProjectDao projectDao, @NonNull TaskDao taskDao) {
         mProjectDao = projectDao;
         mTaskDao = taskDao;
         wireUpMediator();
@@ -88,19 +86,19 @@ class MainViewModel extends ViewModel {
     }
 
 
-    LiveData<List<TaskUIModel>> getUiModelsLiveData() {
+    public LiveData<List<TaskUIModel>> getUiModelsLiveData() {
         return mUiModelsLiveData;
     }
 
-    LiveData<ViewAction> getViewActionLiveData() {
+    public LiveData<ViewAction> getViewActionLiveData() {
         return mSingleLiveEvent;
     }
 
-    LiveData<Boolean> getNoTaskLiveData() {
+    public LiveData<Boolean> getNoTaskLiveData() {
         return mNoTaskLiveData;
     }
 
-    LiveData<List<Project>> getProjectsLiveData() {
+    public LiveData<List<Project>> getProjectsLiveData() {
         return mProjectsLiveData;
     }
 
@@ -175,7 +173,7 @@ class MainViewModel extends ViewModel {
     }
 
 
-    void sortingTasks(SortingMethod sortingType) {
+    public void sortingTasks(SortingMethod sortingType) {
         mSortingMethod = sortingType;
 
         mSortingMethodLiveData.setValue(mSortingMethod);
@@ -191,7 +189,7 @@ class MainViewModel extends ViewModel {
         return new TaskUIModel(id, name, color);
     }
 
-    void addTask(long projectId, String taskName) {
+    public void addTask(long projectId, String taskName) {
 
         if (taskName == null || taskName.isEmpty()) {
             mSingleLiveEvent.setValue(ViewAction.ERROR_TASK_NAME);
@@ -202,7 +200,7 @@ class MainViewModel extends ViewModel {
         }
     }
 
-    void deleteTask(long taskId) {
+    public void deleteTask(long taskId) {
         new DeleteDataAsyncTask(mTaskDao, taskId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot;
+package com.cleanup.todocChigot.ui;
 
 import androidx.annotation.IdRes;
 import androidx.test.espresso.PerformException;
@@ -8,6 +8,8 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import com.cleanup.todocChigot.ui.RecyclerViewMatcher;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -24,7 +26,7 @@ class TestUtils {
         return new ActionOnItemViewAtPositionViewAction(position, viewId, viewAction);
     }
 
-    public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
+    static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
 
         return new RecyclerViewMatcher(recyclerViewId);
     }
@@ -47,9 +49,9 @@ class TestUtils {
         }
 
         public Matcher<View> getConstraints() {
-            return Matchers.allOf(new Matcher[]{
+            return Matchers.allOf(
                     ViewMatchers.isAssignableFrom(RecyclerView.class), ViewMatchers.isDisplayed()
-            });
+            );
         }
 
         public String getDescription() {
@@ -91,9 +93,9 @@ class TestUtils {
         }
 
         public Matcher<View> getConstraints() {
-            return Matchers.allOf(new Matcher[]{
+            return Matchers.allOf(
                     ViewMatchers.isAssignableFrom(RecyclerView.class), ViewMatchers.isDisplayed()
-            });
+            );
         }
 
         public String getDescription() {

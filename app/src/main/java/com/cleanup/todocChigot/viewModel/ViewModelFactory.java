@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot.ui;
+package com.cleanup.todocChigot.viewModel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -39,6 +39,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     }
 
 
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {

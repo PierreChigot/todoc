@@ -15,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/bkg_oval"
+        android:src="@drawable/ic_oval"
         tools:tint="@color/colorPrimary"/>
 <!--        tools:tint="@sample/tasks.json/data/backgroundTint" -->
 

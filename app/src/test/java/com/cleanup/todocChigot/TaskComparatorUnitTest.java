@@ -1,7 +1,7 @@
 package com.cleanup.todocChigot;
 
 import com.cleanup.todocChigot.model.Task;
-import com.cleanup.todocChigot.utils.TaskComparator;
+import com.cleanup.todocChigot.viewModel.TaskComparator;
 
 import org.junit.Test;
 

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cleanup.todocChigot.R;
+import com.cleanup.todocChigot.viewModel.TaskUIModel;
 
 
 public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHolder> {

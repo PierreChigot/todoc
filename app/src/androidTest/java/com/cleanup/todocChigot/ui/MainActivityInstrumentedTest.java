@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot;
+package com.cleanup.todocChigot.ui;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
@@ -13,10 +13,10 @@ import android.view.View;
 
 import android.widget.TextView;
 
+import com.cleanup.todocChigot.R;
 import com.cleanup.todocChigot.data.AppDatabase;
 
 import com.cleanup.todocChigot.data.TaskDao;
-import com.cleanup.todocChigot.ui.MainActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,8 +35,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.cleanup.todocChigot.TestUtils.withRecyclerView;
 
+import static com.cleanup.todocChigot.ui.TestUtils.withRecyclerView;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -111,52 +111,52 @@ public class MainActivityInstrumentedTest {
         onView(withId(android.R.id.button1)).perform(click());
 
 
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("aaa Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("zzz Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("hhh Tâche example")));
 
 
         // Sort alphabetical
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_alphabetical)).perform(click());
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("aaa Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("hhh Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("zzz Tâche example")));
 
         // Sort alphabetical inverted
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_alphabetical_invert)).perform(click());
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("zzz Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("hhh Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("aaa Tâche example")));
 
         // Sort old first
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_oldest_first)).perform(click());
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("aaa Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("zzz Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("hhh Tâche example")));
 
         // Sort recent first
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_recent_first)).perform(click());
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("hhh Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("zzz Tâche example")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("aaa Tâche example")));
     }
 
@@ -202,17 +202,17 @@ public class MainActivityInstrumentedTest {
 
         onView(withId(R.id.action_filter)).perform(click());
         onView(withText(R.string.sort_project)).perform(click());
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(0))
                 .check(matches(withText("aaa Tâche project 1")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(1))
                 .check(matches(withText("bbb Tâche project 1")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(2))
                 .check(matches(withText("aaa Tâche project 2")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(3, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(3))
                 .check(matches(withText("bbb Tâche project 2")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(4, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(4))
                 .check(matches(withText("aaa Tâche project 3")));
-        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(5, R.id.lbl_task_name))
+        onView(withRecyclerView(R.id.list_tasks).atPositionOnView(5))
                 .check(matches(withText("bbb Tâche project 3")));
 
 

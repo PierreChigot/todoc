@@ -1,8 +1,10 @@
-package com.cleanup.todocChigot;
+package com.cleanup.todocChigot.ui;
 
 import android.content.res.Resources;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import com.cleanup.todocChigot.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -13,14 +15,14 @@ import org.hamcrest.TypeSafeMatcher;
  *
  * https://github.com/dannyroa/espresso-samples/blob/master/RecyclerView/app/src/androidTest/java/com/dannyroa/espresso_samples/recyclerview/RecyclerViewMatcher.java
  */
-public class RecyclerViewMatcher {
+class RecyclerViewMatcher {
     private final int recyclerViewId;
 
-    public RecyclerViewMatcher(int recyclerViewId) {
+    RecyclerViewMatcher(int recyclerViewId) {
         this.recyclerViewId = recyclerViewId;
     }
 
-    public Matcher<View> atPositionOnView(final int position, final int targetViewId) {
+    Matcher<View> atPositionOnView(final int position) {
 
         return new TypeSafeMatcher<View>() {
             Resources resources = null;
@@ -54,10 +56,10 @@ public class RecyclerViewMatcher {
                     }
                 }
 
-                if (targetViewId == -1) {
+                if (R.id.lbl_task_name == -1) {
                     return view == childView;
                 } else {
-                    View targetView = childView.findViewById(targetViewId);
+                    View targetView = childView.findViewById(R.id.lbl_task_name);
                     return view == targetView;
                 }
 

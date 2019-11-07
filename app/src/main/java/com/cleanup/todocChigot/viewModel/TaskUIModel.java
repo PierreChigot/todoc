@@ -1,11 +1,11 @@
-package com.cleanup.todocChigot.ui;
+package com.cleanup.todocChigot.viewModel;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-class TaskUIModel {
+public class TaskUIModel {
     private final long mId;
     @NonNull
     private final String mName;
@@ -29,7 +29,7 @@ class TaskUIModel {
     }
 
     @ColorInt
-    int getColorInt() {
+    public int getColorInt() {
         return mColorInt;
     }
 

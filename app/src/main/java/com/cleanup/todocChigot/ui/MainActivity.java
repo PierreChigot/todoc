@@ -23,6 +23,12 @@ import android.widget.TextView;
 
 import com.cleanup.todocChigot.R;
 import com.cleanup.todocChigot.model.Project;
+import com.cleanup.todocChigot.viewModel.MainViewModel;
+import com.cleanup.todocChigot.viewModel.SortingMethod;
+import com.cleanup.todocChigot.viewModel.TaskUIModel;
+import com.cleanup.todocChigot.viewModel.ViewAction;
+import com.cleanup.todocChigot.viewModel.ViewModelFactory;
+
 import java.util.List;
 
 

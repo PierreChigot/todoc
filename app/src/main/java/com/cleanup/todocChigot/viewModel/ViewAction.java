@@ -1,4 +1,4 @@
-package com.cleanup.todocChigot.ui;
+package com.cleanup.todocChigot.viewModel;
 
 public enum ViewAction {
     SHOW_DIALOG,

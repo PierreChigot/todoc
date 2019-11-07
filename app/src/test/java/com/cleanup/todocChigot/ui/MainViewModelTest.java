@@ -9,6 +9,9 @@ import com.cleanup.todocChigot.data.ProjectDao;
 import com.cleanup.todocChigot.data.TaskDao;
 import com.cleanup.todocChigot.model.Project;
 import com.cleanup.todocChigot.model.Task;
+import com.cleanup.todocChigot.viewModel.MainViewModel;
+import com.cleanup.todocChigot.viewModel.SortingMethod;
+import com.cleanup.todocChigot.viewModel.TaskUIModel;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -365,7 +368,7 @@ public class MainViewModelTest {
         assertEquals(0xFFB4CDBA, result.get(3).getColorInt());
 
     }
-    //TODO est-ce que ça vaut le coup :
+
     @Test
     public void shouldDeleteTaskCorrectly() throws InterruptedException {
         //Given
