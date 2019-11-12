@@ -64,10 +64,7 @@ public class TasksAdapter extends ListAdapter<TaskUIModel, TasksAdapter.ViewHold
             mNameTask.setText(model.getName());
 
             mImgProject.setSupportImageTintList(ColorStateList.valueOf(model.getColorInt()));
-            //mProjectName.setText(taskProject.getName());
 
-            //imgProject.setVisibility(View.INVISIBLE);
-            //lblProjectName.setText("");
 
 
             mDeleteButton.setOnClickListener(new View.OnClickListener() {

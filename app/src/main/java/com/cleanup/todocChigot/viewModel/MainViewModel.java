@@ -173,8 +173,8 @@ public class MainViewModel extends ViewModel {
     }
 
 
-    public void sortingTasks(SortingMethod sortingType) {
-        mSortingMethod = sortingType;
+    public void sortingTasks(SortingMethod sortingMethod) {
+        mSortingMethod = sortingMethod;
 
         mSortingMethodLiveData.setValue(mSortingMethod);
 
@@ -236,11 +236,9 @@ public class MainViewModel extends ViewModel {
 
         private final long mTaskId;
 
-
         private DeleteDataAsyncTask(@NonNull TaskDao taskDao, long taskId) {
             mTaskDao = taskDao;
             mTaskId = taskId;
-
         }
 
         @Override

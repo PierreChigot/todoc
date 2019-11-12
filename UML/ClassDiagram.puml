@@ -5,7 +5,7 @@ title __Todoc's Class Diagram__\n
 
 package Database <<Database>> #d7ccc8{
   abstract class AppDatabase {
-          {static} - sInstance : AppDatabase
+          {static} - instance
           {static} + getInstance()
           {abstract} + projectDao()
           {abstract} + taskDao()
@@ -25,7 +25,6 @@ package Database <<Database>> #d7ccc8{
           {abstract} + insertTask()
           {abstract} + updateTask()
       }
-      AppDatabase -|> RoomDatabase
  }
 
 
@@ -35,7 +34,6 @@ package Database <<Database>> #d7ccc8{
           - color : int
           - id : long
           - name : String
-          + Project()
           + getColor()
           + getId()
           + getName()
@@ -47,7 +45,6 @@ package Database <<Database>> #d7ccc8{
           - id : long
           - name : String
           - projectId : long
-          + Task()
           + getCreationTimestamp()
           + getId()
           + getName()
@@ -60,10 +57,10 @@ package Database <<Database>> #d7ccc8{
  }
  package View #ffe0b2{
       class MainActivity {
-          - mDialog : AlertDialog
-          - mDialogEditText : EditText
-          - mDialogSpinner : Spinner
-          - mProjects : List<Project>
+          - dialog : AlertDialog
+          - dialogEditText : EditText
+          - dialogSpinner : Spinner
+          - projects : List<Project>
           + onCreate()
           + onCreateOptionsMenu()
           + onDeleteTask()
@@ -78,20 +75,39 @@ package Database <<Database>> #d7ccc8{
         + onCreateViewHolder()
         ~ TasksAdapter()
       }
-      MainActivity .|> TasksAdapter.DeleteTaskListener
-      TasksAdapter o- TasksAdapter.DeleteTaskListener
-      TasksAdapter +- DeleteTaskListener
-      TasksAdapter +- TasksAdapter.DiffCallback
-      TasksAdapter +- TasksAdapter.ViewHolder
+       interface DeleteTaskListener {
+                {abstract} + onDeleteTask()
+            }
+
+            class DiffCallback {
+                + areContentsTheSame()
+                + areItemsTheSame()
+            }
+
+            class ViewHolder {
+                - deleteButton : ImageView
+                - imgProject : ImageView
+                - nameTask : TextView
+                - projectName : TextView
+                ~ bind()
+            }
+      MainActivity - TasksAdapter
+
+      TasksAdapter -- DeleteTaskListener
+      TasksAdapter -- DiffCallback
+      TasksAdapter -- ViewHolder
+      MainActivity .|> DeleteTaskListener
  }
- package TodocViewModel  <<Node>> #81d4fa{
+ package ViewModel  <<Node>> #81d4fa{
       class MainViewModel {
-          - mNoTaskLiveData : MutableLiveData<Boolean>
-          - mProjectsLiveData : LiveData<List<Project>>
-          - mSingleLiveEvent : SingleLiveEvent<ViewAction>
-          - mSortingMethodLiveData : MutableLiveData<SortingMethod>
-          - mUiModelsLiveData : MediatorLiveData<List<TaskUIModel>>
-          ~ MainViewModel()
+          - projectDao : ProjectDao
+          - taskDao : TaskDao
+          - noTaskLiveData : MutableLiveData<Boolean>
+          - projectsLiveData : LiveData<List<Project>>
+          - singleLiveEvent : SingleLiveEvent<ViewAction>
+          - sortingMethodLiveData : MutableLiveData<SortingMethod>
+          - uiModelsLiveData : MediatorLiveData<List<TaskUIModel>>
+          - sortingMethod  : SortingMethod
           ~ addTask()
           ~ deleteTask()
           ~ getNoTaskLiveData()
@@ -104,16 +120,16 @@ package Database <<Database>> #d7ccc8{
           - wireUpMediator()
       }
 
-      class MainViewModel.DeleteDataAsyncTask {
-          - mTaskId : long
+      class DeleteDataAsyncTask {
+          - taskDao : TaskDao
+          - taskId : long
           # doInBackground()
-          - DeleteDataAsyncTask()
       }
 
-     class MainViewModel.InsertDataAsyncTask {
-          - mProjectId : long
+     class InsertDataAsyncTask {
+          - taskDao : TaskDao
+          - projectId : long
           # doInBackground()
-          - InsertDataAsyncTask()
       }
 
 
@@ -127,35 +143,14 @@ package Database <<Database>> #d7ccc8{
 
 
       class TaskUIModel {
-          - mColorInt : int
-          - mId : long
-          - mName : String
+          - colorInt : int
+          - id : long
+          - name : String
           + equals()
           + getId()
           + getName()
-          ~ TaskUIModel()
           ~ getColorInt()
       }
-
-
-      interface DeleteTaskListener {
-          {abstract} + onDeleteTask()
-      }
-
-      class TasksAdapter.DiffCallback {
-          + areContentsTheSame()
-          + areItemsTheSame()
-      }
-
-      class TasksAdapter.ViewHolder {
-          - mDeleteButton : ImageView
-          - mImgProject : ImageView
-          - mNameTask : TextView
-          - mProjectName : TextView
-          ~ ViewHolder()
-          ~ bind()
-      }
-
 
       enum ViewAction {
         DIALOG_DISMISS
@@ -164,36 +159,32 @@ package Database <<Database>> #d7ccc8{
       }
 
       class ViewModelFactory {
-          {static} - sFactory : ViewModelFactory
+          - projectDao : ProjectDao
+          - taskDao : TaskDao
           + create()
           {static} + getInstance()
-          - ViewModelFactory()
       }
 
 
-  
-
-
-
-MainActivity o-- MainViewModel : mViewModel
-MainActivity -- ViewModelFactory : ViewModelProvider
+MainActivity -- MainViewModel
+MainActivity -- ViewModelFactory
 
 SortingMethod -[hidden]> SortingMethod
 TaskUIModel -[hidden]>ViewAction
-MainViewModel o-- ViewAction : LiveData
-MainViewModel o-- TaskUIModel : LiveData
-MainViewModel o-- ProjectDao : mProjectDao LiveData
-MainViewModel o-- SortingMethod : LiveData
-MainViewModel o-- TaskDao : mTaskDao LiveData
-MainViewModel +-- MainViewModel.DeleteDataAsyncTask
-MainViewModel +-- MainViewModel.InsertDataAsyncTask
-MainViewModel.DeleteDataAsyncTask o- TaskDao : mTaskDao
-MainViewModel.InsertDataAsyncTask o--- Task : mTask
-MainViewModel.InsertDataAsyncTask o-- TaskDao : mTaskDao
+MainViewModel -- ViewAction
+MainViewModel -- TaskUIModel
+MainViewModel -- ProjectDao
+MainViewModel -- SortingMethod
+MainViewModel -- TaskDao
+MainViewModel -- DeleteDataAsyncTask
+MainViewModel -- InsertDataAsyncTask
+DeleteDataAsyncTask - TaskDao
+InsertDataAsyncTask -- Task
+InsertDataAsyncTask -- TaskDao
 
 
-ViewModelFactory o- ProjectDao : projectDao
-ViewModelFactory o- TaskDao : taskDao
+ViewModelFactory - ProjectDao
+ViewModelFactory - TaskDao
 
 
 

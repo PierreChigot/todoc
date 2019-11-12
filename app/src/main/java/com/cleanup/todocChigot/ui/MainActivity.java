@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         mLblNoTasks = findViewById(R.id.lbl_no_task);
         listTasks.setLayoutManager(new LinearLayoutManager(this));
         listTasks.setAdapter(tasksAdapter);
-        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(MainViewModel.class);
+        mViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(getApplicationContext())).get(MainViewModel.class);
 
         mViewModel.getUiModelsLiveData().observe(this, new Observer<List<TaskUIModel>>() {
             @Override

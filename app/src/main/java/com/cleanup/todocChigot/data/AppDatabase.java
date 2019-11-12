@@ -1,6 +1,7 @@
 package com.cleanup.todocChigot.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.cleanup.todocChigot.MainApplication;
 import com.cleanup.todocChigot.model.Project;
 import com.cleanup.todocChigot.model.Task;
 
@@ -24,12 +24,12 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase sInstance;
 
-    public static AppDatabase getInstance() {
+    public static AppDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (AppDatabase.class) {
                 if (sInstance == null) {
                     sInstance = Room.databaseBuilder(
-                            MainApplication.getInstance(),
+                            context.getApplicationContext(),
                             AppDatabase.class,
                             "Database.db")
                     .addCallback(populateInitialData())

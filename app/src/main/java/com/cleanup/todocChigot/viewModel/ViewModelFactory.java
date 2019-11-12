@@ -1,5 +1,7 @@
 package com.cleanup.todocChigot.viewModel;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,13 +25,13 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
        this.taskDao = taskDao;
     }
 
-    public static ViewModelFactory getInstance() {
+    public static ViewModelFactory getInstance(Context context) {
         if (sFactory == null) {
             synchronized (ViewModelFactory.class) {
                 if (sFactory == null) {
                     sFactory = new ViewModelFactory(
-                            AppDatabase.getInstance().projectDao(),
-                            AppDatabase.getInstance().taskDao()
+                            AppDatabase.getInstance(context).projectDao(),
+                            AppDatabase.getInstance(context).taskDao()
                     );
                 }
             }
